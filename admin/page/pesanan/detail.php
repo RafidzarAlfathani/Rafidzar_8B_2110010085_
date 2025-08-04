@@ -11,6 +11,17 @@ $sql_pesanan = $con->query("SELECT ps.*, pm.nama_pembeli, pm.email AS email_pemb
     WHERE ps.id_pesanan = '$id_pesanan'");
 $pesanan = $sql_pesanan->fetch_assoc();
 
+// Query ambil data alamat petani berdasarkan produk dalam pesanan
+$query = "
+SELECT DISTINCT p.nama_produk, pt.nama_petani, pt.alamat_petani
+FROM detail_pesanan dp
+JOIN produk p ON dp.id_produk = p.id_produk
+JOIN petani pt ON p.id_petani = pt.id_petani
+WHERE dp.id_pesanan = '$id_pesanan'
+";
+
+$result = $con->query($query);
+
 // ... (Kode keamanan verifikasi hak akses Anda tidak perlu diubah) ...
 if (!$pesanan) {
     echo "<script>Swal.fire('Error!', 'Pesanan tidak ditemukan.', 'error').then(() => window.location.href = '?page=pesanan');</script>";
@@ -61,26 +72,26 @@ if (!$has_access) {
                                                  FROM detail_pesanan dp
                                                  JOIN produk pr ON dp.id_produk = pr.id_produk
                                                  WHERE dp.id_pesanan = '$id_pesanan'";
-                                
+
                                 $ambil_detail = $con->query($query_detail);
                                 while ($item = $ambil_detail->fetch_assoc()) {
                                     $total_belanja_keseluruhan += $item['sub_total'];
-                                    
+
                                     if ($user_level != 'Petani' || ($user_level == 'Petani' && $item['id_petani'] == $user_id)) {
-                                        if($user_level == 'Petani') {
+                                        if ($user_level == 'Petani') {
                                             $total_belanja_petani += $item['sub_total'];
                                         }
                                 ?>
-                                <tr>
-                                    <td>
-                                        <img src="images/produk/<?= $item['foto_produk']; ?>" width="40" class="me-2">
-                                        <?= $item['nama_produk']; ?>
-                                    </td>
-                                    <td>Rp <?= number_format($item['harga_saat_pesan']); ?></td>
-                                    <td><?= $item['jumlah']; ?></td>
-                                    <td>Rp <?= number_format($item['sub_total']); ?></td>
-                                </tr>
-                                <?php 
+                                        <tr>
+                                            <td>
+                                                <img src="images/produk/<?= $item['foto_produk']; ?>" width="40" class="me-2">
+                                                <?= $item['nama_produk']; ?>
+                                            </td>
+                                            <td>Rp <?= number_format($item['harga_saat_pesan']); ?></td>
+                                            <td><?= $item['jumlah']; ?></td>
+                                            <td>Rp <?= number_format($item['sub_total']); ?></td>
+                                        </tr>
+                                <?php
                                     }
                                 }
                                 ?>
@@ -89,20 +100,34 @@ if (!$has_access) {
                     </div>
                 </div>
                 <div class="card">
-                     <div class="card-header">Detail Pengiriman & Pembeli</div>
-                     <div class="card-body">
-                        <h5>Alamat Pengiriman:</h5>
+                    <div class="card-header">Detail Pengiriman & Pembeli</div>
+                    <div class="card-body">
+                        <h5>Alamat Tujuan:</h5>
                         <p><?= $pesanan['alamat_pengiriman']; ?></p>
+                        <h5>Alamat Pengambilan Produk:</h5>
+                        <p>        <?php
+                                $result = $con->query("
+                                        SELECT DISTINCT pt.nama_petani, pt.alamat_petani 
+                                        FROM detail_pesanan dp
+                                        JOIN produk p ON dp.id_produk = p.id_produk
+                                        JOIN petani pt ON p.id_petani = pt.id_petani
+                                        WHERE dp.id_pesanan = '$id_pesanan'
+                                    ");
+                                while ($row = $result->fetch_assoc()) {
+                                    echo "<p><strong>{$row['nama_petani']}</strong><br>{$row['alamat_petani']}</p>";
+                                }
+                                ?>
+                        </p>
                         <hr>
                         <h5>Info Pembeli:</h5>
                         <p>
                             <strong>Nama:</strong> <?= $pesanan['nama_pembeli']; ?><br>
                             <?php if ($user_level != 'Petani'): ?>
-                            <strong>Email:</strong> <?= $pesanan['email_pembeli']; ?><br>
-                            <strong>Telepon:</strong> <?= $pesanan['telp_pembeli']; ?>
+                                <strong>Email:</strong> <?= $pesanan['email_pembeli']; ?><br>
+                                <strong>Telepon:</strong> <?= $pesanan['telp_pembeli']; ?>
                             <?php endif; ?>
                         </p>
-                     </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -129,14 +154,14 @@ if (!$has_access) {
                 </div>
 
                 <?php if (($user_level == 'Admin' || $user_level == 'Pimpinan') && $pesanan['metode_pembayaran'] == 'Transfer Bank' && !empty($pesanan['bukti_bayar'])) : ?>
-                <div class="card mb-3">
-                    <div class="card-header">Bukti Pembayaran</div>
-                    <div class="card-body text-center">
-                        <a href="images/bukti_bayar/<?= $pesanan['bukti_bayar']; ?>" target="_blank">
-                            <img src="images/bukti_bayar/<?= $pesanan['bukti_bayar']; ?>" class="img-fluid" style="max-height: 300px;">
-                        </a>
+                    <div class="card mb-3">
+                        <div class="card-header">Bukti Pembayaran</div>
+                        <div class="card-body text-center">
+                            <a href="images/bukti_bayar/<?= $pesanan['bukti_bayar']; ?>" target="_blank">
+                                <img src="images/bukti_bayar/<?= $pesanan['bukti_bayar']; ?>" class="img-fluid" style="max-height: 300px;">
+                            </a>
+                        </div>
                     </div>
-                </div>
                 <?php endif; ?>
 
                 <div class="card">
@@ -151,11 +176,11 @@ if (!$has_access) {
                                 <p>Pesanan ini sudah ditandai sebagai <strong><?= $pesanan['status_pesanan']; ?></strong> dan tidak dapat diubah lagi.</p>
                             </div>
                             <hr>
-                             <p>Status Akhir:</p>
-                             <h4><span class="badge bg-success"><?= $pesanan['status_pesanan']; ?></span></h4>
-                             <hr>
-                             <p>Kurir Bertugas:</p>
-                             <h5><?= $pesanan['nama_kurir'] ?? '<span class="text-muted">Tidak Ada</span>'; ?></h5>
+                            <p>Status Akhir:</p>
+                            <h4><span class="badge bg-success"><?= $pesanan['status_pesanan']; ?></span></h4>
+                            <hr>
+                            <p>Kurir Bertugas:</p>
+                            <h5><?= $pesanan['nama_kurir'] ?? '<span class="text-muted">Tidak Ada</span>'; ?></h5>
 
                         <?php else: ?>
                             <form method="post">
@@ -195,7 +220,7 @@ if (!$has_access) {
                                         </select>
                                     </div>
                                     <button type="submit" name="update_pesanan" class="btn btn-success w-100">Update Status</button>
-                                
+
                                 <?php else: ?>
                                     <p>Status Saat Ini:</p>
                                     <h4><span class="badge bg-primary"><?= $pesanan['status_pesanan']; ?></span></h4>
@@ -204,7 +229,8 @@ if (!$has_access) {
                                     <h5><?= $pesanan['nama_kurir'] ?? '<span class="text-muted">Belum Ditugaskan</span>'; ?></h5>
                                 <?php endif; ?>
                             </form>
-                        <?php endif; // Akhir dari pengecekan status Selesai/Dibatalkan ?>
+                        <?php endif; // Akhir dari pengecekan status Selesai/Dibatalkan 
+                        ?>
 
                         <?php
                         // 🛡️ Kunci Keamanan: Proses update hanya jika pesanan belum selesai
@@ -212,10 +238,10 @@ if (!$has_access) {
                             $status_baru = $_POST['status_pesanan'];
                             $id_kurir_sql_part = "";
                             if ($user_level == 'Admin' || $user_level == 'Pimpinan') {
-                                $id_kurir_baru = !empty($_POST['id_kurir']) ? "'".$_POST['id_kurir']."'" : "NULL";
+                                $id_kurir_baru = !empty($_POST['id_kurir']) ? "'" . $_POST['id_kurir'] . "'" : "NULL";
                                 $id_kurir_sql_part = ", id_kurir = $id_kurir_baru";
                             }
-                            
+
                             $query = "UPDATE pesanan SET status_pesanan = '$status_baru' $id_kurir_sql_part WHERE id_pesanan = '$id_pesanan'";
 
                             if ($con->query($query) === TRUE) {
@@ -230,7 +256,7 @@ if (!$has_access) {
                         ?>
                     </div>
                 </div>
-                 <a href="?page=pesanan" class="btn btn-danger btn-sm mt-3">Kembali ke Daftar Pesanan</a>
+                <a href="?page=pesanan" class="btn btn-danger btn-sm mt-3">Kembali ke Daftar Pesanan</a>
             </div>
         </div>
     </div>
