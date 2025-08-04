@@ -105,18 +105,18 @@ if (!$has_access) {
                         <h5>Alamat Tujuan:</h5>
                         <p><?= $pesanan['alamat_pengiriman']; ?></p>
                         <h5>Alamat Pengambilan Produk:</h5>
-                        <p>        <?php
-                                $result = $con->query("
+                        <p> <?php
+                            $result = $con->query("
                                         SELECT DISTINCT pt.nama_petani, pt.alamat_petani 
                                         FROM detail_pesanan dp
                                         JOIN produk p ON dp.id_produk = p.id_produk
                                         JOIN petani pt ON p.id_petani = pt.id_petani
                                         WHERE dp.id_pesanan = '$id_pesanan'
                                     ");
-                                while ($row = $result->fetch_assoc()) {
-                                    echo "<p><strong>{$row['nama_petani']}</strong><br>{$row['alamat_petani']}</p>";
-                                }
-                                ?>
+                            while ($row = $result->fetch_assoc()) {
+                                echo "<p><strong>{$row['nama_petani']}</strong><br>{$row['alamat_petani']}</p>";
+                            }
+                            ?>
                         </p>
                         <hr>
                         <h5>Info Pembeli:</h5>
@@ -244,6 +244,68 @@ if (!$has_access) {
 
                             $query = "UPDATE pesanan SET status_pesanan = '$status_baru' $id_kurir_sql_part WHERE id_pesanan = '$id_pesanan'";
 
+                            // Kirim pesan WhatsApp ke kurir jika ditugaskan
+                            if (!empty($_POST['id_kurir'])) {
+                                $id_kurir_terpilih = $_POST['id_kurir'];
+                                $kurir_result = $con->query("SELECT nama_kurir, telp FROM kurir WHERE id_kurir = '$id_kurir_terpilih'");
+
+                                if ($kurir_result && $kurir_result->num_rows > 0) {
+                                    $kurir_data = $kurir_result->fetch_assoc();
+                                    $nama_kurir = $kurir_data['nama_kurir'];
+                                    $no_wa_kurir = '62' . substr($kurir_data['telp'], 1); // ubah 08... → 628...
+
+                                    // Ambil alamat petani untuk teks
+                                    $alamat_pengambilan = "";
+                                    $ambil_alamat = $con->query("
+            SELECT DISTINCT pt.nama_petani, pt.alamat_petani 
+            FROM detail_pesanan dp
+            JOIN produk p ON dp.id_produk = p.id_produk
+            JOIN petani pt ON p.id_petani = pt.id_petani
+            WHERE dp.id_pesanan = '$id_pesanan'
+        ");
+                                    while ($row = $ambil_alamat->fetch_assoc()) {
+                                        $alamat_pengambilan .= "📍 " . $row['nama_petani'] . " - " . $row['alamat_petani'] . "\n";
+                                    }
+
+                                    // Token Fonnte
+                                    $token = "7HY2322NXBXt4LKDVpkU"; // Ganti dengan token milik Anda
+
+                                    // Format pesan
+                                    $pesan = "Halo *$nama_kurir*, Anda telah ditugaskan untuk mengantar pesanan berikut:\n\n" .
+                                        "📦 *Kode Invoice:* $pesanan[kode_invoice]\n" .
+                                        "🚚 *Status:* $status_baru\n\n" .
+                                        "🧑‍🌾 *Alamat Pengambilan Produk:*\n$alamat_pengambilan\n" .
+                                        "📍 *Alamat Tujuan:* $pesanan[alamat_pengiriman]\n\n" .
+                                        "Silakan segera proses pengiriman. Terima kasih.";
+
+                                    // Kirim via API Fonnte
+                                    $curl = curl_init();
+                                    curl_setopt_array($curl, array(
+                                        CURLOPT_URL => 'https://api.fonnte.com/send',
+                                        CURLOPT_RETURNTRANSFER => true,
+                                        CURLOPT_ENCODING => '',
+                                        CURLOPT_MAXREDIRS => 10,
+                                        CURLOPT_TIMEOUT => 0,
+                                        CURLOPT_FOLLOWLOCATION => true,
+                                        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                                        CURLOPT_CUSTOMREQUEST => 'POST',
+                                        CURLOPT_POSTFIELDS => array(
+                                            'target' => $no_wa_kurir,
+                                            'message' => $pesan,
+                                            'countryCode' => '62'
+                                        ),
+                                        CURLOPT_HTTPHEADER => array(
+                                            "Authorization: $token"
+                                        ),
+                                    ));
+                                    $response = curl_exec($curl);
+                                    curl_close($curl);
+                                    // Optional: log atau tampilkan respons untuk debug
+                                    // echo $response;
+                                }
+                            }
+
+
                             if ($con->query($query) === TRUE) {
                                 echo "<script>
                                         Swal.fire({ icon: 'success', title: 'Berhasil!', text: 'Status pesanan berhasil diperbarui.' })
@@ -257,6 +319,10 @@ if (!$has_access) {
                     </div>
                 </div>
                 <a href="?page=pesanan" class="btn btn-danger btn-sm mt-3">Kembali ke Daftar Pesanan</a>
+                <br>
+                <?php if ($pesanan['status_pesanan'] == 'Selesai' && empty($pesanan['bukti_sampai'])): ?>
+                    <a href="upload_bukti_sampai.php?id=<?= $pesanan['id_pesanan']; ?>" class="btn btn-primary btn-sm mt-3">📷 Upload Bukti Sampai</a>
+                <?php endif; ?>
             </div>
         </div>
     </div>
