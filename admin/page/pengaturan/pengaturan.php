@@ -43,7 +43,7 @@ $data = mysqli_fetch_assoc($sql);
                             <li><span>Telepon:</span> <?= $data['telp'] ?></li>
                             <li><span>Email:</span> <?= $data['email'] ?></li>
                             <li><span>Alamat:</span> <?= $data['alamat'] ?></li>
-                            <li><span>Kepala Sekolah:</span> <?= $data['pimpinan'] ?></li>
+                            <li><span>Kepala Balai:</span> <?= $data['pimpinan'] ?></li>
                         </ul> 
                     </div>
                 </div> 
