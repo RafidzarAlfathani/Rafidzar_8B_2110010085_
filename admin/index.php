@@ -240,7 +240,7 @@ if (isset($_SESSION['user_level'])) {
             if ($aksi == "ubah") { include "page/pesanan/ubah.php"; }  
             if ($aksi == "hapus") { include "page/pesanan/hapus.php"; }  
             if ($aksi == "detail") { include "page/pesanan/detail.php"; }  
-            if ($aksi == "tambah_sampai") { include "page/pesanan/upload_bukti_pesanan.php"; }  
+            if ($aksi == "tambah_sampai") { include "page/pesanan/upload_bukti_sampai.php"; }  
         }      
 
         if ($page == "tracking") 

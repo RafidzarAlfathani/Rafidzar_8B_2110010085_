@@ -321,7 +321,7 @@ if (!$has_access) {
                 <a href="?page=pesanan" class="btn btn-danger btn-sm mt-3">Kembali ke Daftar Pesanan</a>
                 <br>
                 <?php if ($pesanan['status_pesanan'] == 'Selesai' && empty($pesanan['bukti_sampai'])): ?>
-                    <a href="upload_bukti_sampai.php?id=<?= $pesanan['id_pesanan']; ?>" class="btn btn-primary btn-sm mt-3">📷 Upload Bukti Sampai</a>
+                    <a href="?page=pesanan&aksi=tambah_sampai&id=<?= $data['id_pesanan']; ?>" class="btn btn-primary">📷 Upload Bukti Sampai</a>
                 <?php endif; ?>
             </div>
         </div>
