@@ -163,6 +163,17 @@ if (!$has_access) {
                         </div>
                     </div>
                 <?php endif; ?>
+                <?php if (!empty($pesanan['bukti_sampai'])): ?>
+    <div class=" card mb-3">
+        <label><strong>Bukti Sampai:</strong></label><br>
+        <img src="../../images/bukti_sampai/<?= htmlspecialchars($pesanan['bukti_sampai']); ?>" alt="Bukti Sampai" class="img-fluid img-thumbnail" style="max-width: 300px;">
+    </div>
+<?php else: ?>
+    <div class="mt-3 text-muted">
+        <em>Bukti  sampai belum diunggah.</em>
+    </div>
+<?php endif; ?>
+
 
                 <div class="card">
                     <div class="card-header">Update Status & Pengiriman</div>
@@ -321,7 +332,7 @@ if (!$has_access) {
                 <a href="?page=pesanan" class="btn btn-danger btn-sm mt-3">Kembali ke Daftar Pesanan</a>
                 <br>
                 <?php if ($pesanan['status_pesanan'] == 'Selesai' && empty($pesanan['bukti_sampai'])): ?>
-                    <a href="?page=pesanan&aksi=tambah_sampai&id=<?= $data['id_pesanan']; ?>" class="btn btn-primary">📷 Upload Bukti Sampai</a>
+                   <a href="?page=pesanan&aksi=upload_bukti_sampai&id_pesanan=<?= $pesanan['id_pesanan']; ?>" class="btn btn-primary btn-sm mt-3">📷 Upload Bukti Sampai</a>
                 <?php endif; ?>
             </div>
         </div>

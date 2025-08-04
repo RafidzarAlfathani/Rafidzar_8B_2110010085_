@@ -239,8 +239,8 @@ if (isset($_SESSION['user_level'])) {
             if ($aksi == "tambah") { include "page/pesanan/tambah.php"; }  
             if ($aksi == "ubah") { include "page/pesanan/ubah.php"; }  
             if ($aksi == "hapus") { include "page/pesanan/hapus.php"; }  
-            if ($aksi == "detail") { include "page/pesanan/detail.php"; }  
-            if ($aksi == "tambah_sampai") { include "page/pesanan/upload_bukti_sampai.php"; }  
+            if ($aksi == "detail") { include "page/pesanan/detail.php"; } 
+            if ($aksi == "upload_bukti_sampai") { include "page/pesanan/upload_bukti_sampai.php"; } 
         }      
 
         if ($page == "tracking") 
