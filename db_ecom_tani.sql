@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.1.3
+-- version 5.0.2
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 15, 2025 at 07:50 AM
--- Server version: 10.4.24-MariaDB
--- PHP Version: 7.4.29
+-- Waktu pembuatan: 05 Agu 2025 pada 07.14
+-- Versi server: 10.4.11-MariaDB
+-- Versi PHP: 7.4.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -24,7 +24,7 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `admin`
+-- Struktur dari tabel `admin`
 --
 
 CREATE TABLE `admin` (
@@ -38,7 +38,7 @@ CREATE TABLE `admin` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Dumping data for table `admin`
+-- Dumping data untuk tabel `admin`
 --
 
 INSERT INTO `admin` (`id_admin`, `nama`, `level`, `username`, `password`, `foto`, `status`) VALUES
@@ -48,7 +48,7 @@ INSERT INTO `admin` (`id_admin`, `nama`, `level`, `username`, `password`, `foto`
 -- --------------------------------------------------------
 
 --
--- Table structure for table `detail_pesanan`
+-- Struktur dari tabel `detail_pesanan`
 --
 
 CREATE TABLE `detail_pesanan` (
@@ -61,19 +61,24 @@ CREATE TABLE `detail_pesanan` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Dumping data for table `detail_pesanan`
+-- Dumping data untuk tabel `detail_pesanan`
 --
 
 INSERT INTO `detail_pesanan` (`id_detail`, `id_pesanan`, `id_produk`, `jumlah`, `harga_saat_pesan`, `sub_total`) VALUES
 (10, 7, 1, 10, '10000', '100000'),
 (11, 7, 2, 5, '22000', '110000'),
 (12, 7, 3, 3, '12000', '36000'),
-(13, 7, 5, 5, '11000', '55000');
+(13, 7, 5, 5, '11000', '55000'),
+(14, 8, 1, 7, '10000', '70000'),
+(22, 16, 4, 6, '15000', '90000'),
+(24, 18, 4, 2, '15000', '30000'),
+(25, 19, 6, 1, '4500', '4500'),
+(31, 25, 8, 5, '6600', '33000');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `kategori_produk`
+-- Struktur dari tabel `kategori_produk`
 --
 
 CREATE TABLE `kategori_produk` (
@@ -82,7 +87,7 @@ CREATE TABLE `kategori_produk` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Dumping data for table `kategori_produk`
+-- Dumping data untuk tabel `kategori_produk`
 --
 
 INSERT INTO `kategori_produk` (`id_kategori`, `nama_kategori`) VALUES
@@ -90,12 +95,13 @@ INSERT INTO `kategori_produk` (`id_kategori`, `nama_kategori`) VALUES
 (2, 'Buah-buahan'),
 (3, 'Umbi-umbian'),
 (4, 'Rempah-rempah'),
-(5, 'Padi & Palawija');
+(5, 'Padi & Palawija'),
+(6, 'Biji-Bijian');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `kurir`
+-- Struktur dari tabel `kurir`
 --
 
 CREATE TABLE `kurir` (
@@ -108,20 +114,20 @@ CREATE TABLE `kurir` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Dumping data for table `kurir`
+-- Dumping data untuk tabel `kurir`
 --
 
 INSERT INTO `kurir` (`id_kurir`, `nama_kurir`, `telp`, `username`, `password`, `status`) VALUES
 (1, 'Bambang Sutejo', '081234567890', 'bambang', 'kurir123', 'Tersedia'),
-(2, 'Agus Setiawan', '081234567891', 'agus', 'kurir123', 'Tersedia'),
-(3, 'Siti Lestari', '081234567892', 'siti', 'kurir123', 'Bertugas'),
+(2, 'Agus Setiawan', '085156317868', 'agus', 'kurir123', 'Tersedia'),
+(3, 'Siti Lestari', '085787126487', 'siti', 'kurir123', 'Bertugas'),
 (4, 'Joko Haryono', '081234567893', 'joko', 'kurir123', 'Tidak Aktif'),
 (5, 'Eko Prasetyo', '081234567894', 'eko', 'kurir123', 'Bertugas');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `meta`
+-- Struktur dari tabel `meta`
 --
 
 CREATE TABLE `meta` (
@@ -136,16 +142,16 @@ CREATE TABLE `meta` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Dumping data for table `meta`
+-- Dumping data untuk tabel `meta`
 --
 
 INSERT INTO `meta` (`id_meta`, `instansi`, `telp`, `email`, `alamat`, `logo`, `pimpinan`, `singkat`) VALUES
-(1, 'Balai Pertanian Kecamatan Lokpaikat', '(0517) 123456', 'bp.lokpaikat@tapinkab.go.id', 'Jl. Raya Lokpaikat, Kecamatan Lokpaikat, Kabupaten Tapin, Kalimantan Selatan', 'logo.png', 'Ahmad Syahroni, S.P.', 'E-Tani Lokpaikat');
+(1, 'Balai Pertanian Kecamatan Lokpaikat', '(0517) 123456', 'bp.lokpaikat@tapinkab.go.id', 'Jl. Raya Lokpaikat, Kecamatan Lokpaikat, Kabupaten Tapin, Kalimantan Selatan', 'logo.png', 'Tata Suryana, S.P.', 'E-Tani Lokpaikat');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `pembeli`
+-- Struktur dari tabel `pembeli`
 --
 
 CREATE TABLE `pembeli` (
@@ -158,20 +164,20 @@ CREATE TABLE `pembeli` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Dumping data for table `pembeli`
+-- Dumping data untuk tabel `pembeli`
 --
 
 INSERT INTO `pembeli` (`id_pembeli`, `nama_pembeli`, `email`, `password`, `telp`, `foto_pembeli`) VALUES
-(1, 'Anisa Rahmawati', 'anisa@example.com', 'pembeli123', '0895329695138', 'default.png'),
-(2, 'Budi Santoso', 'budi@example.com', 'pembeli123', '0895329695138', 'default.png'),
-(3, 'Citra Kirana', 'citra@example.com', 'pembeli123', '0895329695138', 'default.png'),
-(4, 'Dewi Lestari', 'dewi@example.com', 'pembeli123', '0895329695138', 'default.png'),
-(5, 'Eka Kurniawan', 'eka@example.com', 'pembeli123', '0895329695138', 'default.png');
+(1, 'Alfath hani', 'muh.hani21@gmail.com', 'pembeli123', '085787126487', 'default.png'),
+(2, 'Budi Santoso', 'budi@example.com', 'pembeli123', '085787126487', 'default.png'),
+(3, 'Citra Kirana', 'citra@example.com', 'pembeli123', '085787126487', 'default.png'),
+(4, 'Dewi Lestari', 'dewi@example.com', 'pembeli123', '085787126487', 'default.png'),
+(5, 'Eka Kurniawan', 'eka@example.com', 'pembeli123', '085787126487', 'default.png');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `pesanan`
+-- Struktur dari tabel `pesanan`
 --
 
 CREATE TABLE `pesanan` (
@@ -186,20 +192,26 @@ CREATE TABLE `pesanan` (
   `status_pesanan` enum('Menunggu Pembayaran','Menunggu Verifikasi','Diproses','Dikirim','Selesai','Dibatalkan') NOT NULL DEFAULT 'Menunggu Pembayaran',
   `metode_pembayaran` varchar(50) DEFAULT NULL,
   `bukti_bayar` varchar(255) DEFAULT NULL,
-  `tgl_bayar` datetime DEFAULT NULL
+  `tgl_bayar` datetime DEFAULT NULL,
+  `bukti_sampai` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Dumping data for table `pesanan`
+-- Dumping data untuk tabel `pesanan`
 --
 
-INSERT INTO `pesanan` (`id_pesanan`, `kode_invoice`, `id_pembeli`, `id_kurir`, `alamat_pengiriman`, `total_bayar`, `ongkir`, `tgl_pesan`, `status_pesanan`, `metode_pembayaran`, `bukti_bayar`, `tgl_bayar`) VALUES
-(7, 'INV-20250615-130650-4', 4, 2, 'A paragraph generator is a tool, often powered by AI, that helps users create paragraphs of text based on given prompts or inputs. It can be used to quickly generate content for various purposes, such as blog posts, marketing materials, or even academic writing. These generators can save time and effort, especially when dealing with writer\'s block or tight deadlines. ', '316000', '15000', '2025-06-15 05:06:50', 'Selesai', 'Transfer Bank', 'INV-20250615-130650-4_1749964078.png', '2025-06-15 13:07:58');
+INSERT INTO `pesanan` (`id_pesanan`, `kode_invoice`, `id_pembeli`, `id_kurir`, `alamat_pengiriman`, `total_bayar`, `ongkir`, `tgl_pesan`, `status_pesanan`, `metode_pembayaran`, `bukti_bayar`, `tgl_bayar`, `bukti_sampai`) VALUES
+(7, 'INV-20250615-130650-4', 4, 2, 'A paragraph generator is a tool, often powered by AI, that helps users create paragraphs of text based on given prompts or inputs. It can be used to quickly generate content for various purposes, such as blog posts, marketing materials, or even academic writing. These generators can save time and effort, especially when dealing with writer\'s block or tight deadlines. ', '316000', '15000', '2025-06-15 05:06:50', 'Selesai', 'Transfer Bank', 'INV-20250615-130650-4_1749964078.png', '2025-06-15 13:07:58', NULL),
+(8, 'INV-20250705-143327-3', 3, 1, 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.', '85000', '15000', '2025-07-05 06:33:27', 'Selesai', 'Transfer Bank', 'INV-20250705-143327-3_1751697233.jpg', '2025-07-05 14:33:53', NULL),
+(16, 'INV-20250721-122911-2', 2, 3, 'lokpakat lagi', '105000', '15000', '2025-07-21 04:29:11', 'Selesai', 'Transfer Bank', 'INV-20250721-122911-2_1753072306.jpg', '2025-07-21 12:31:46', NULL),
+(18, 'INV-20250721-125019-2', 2, NULL, 'azml', '45000', '15000', '2025-07-21 04:50:19', 'Menunggu Verifikasi', 'Transfer Bank', 'INV-20250721-125019-2_1753073580.jpg', '2025-07-21 12:53:00', NULL),
+(19, 'INV-20250802-022544-2', 2, 2, 'aaaaaaaaaa', '19500', '15000', '2025-08-01 18:25:44', 'Diproses', 'Transfer Bank', 'INV-20250802-022544-2_1754188683.jpg', '2025-08-03 10:38:03', NULL),
+(25, 'INV-20250805-104405-2', 2, 3, 'handil bakti', '48000', '15000', '2025-08-05 02:44:05', 'Selesai', 'Transfer Bank', 'INV-20250805-104405-2_1754361865.jpg', '2025-08-05 10:44:25', 'bukti_sampai_25_1754362128.jpg');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `petani`
+-- Struktur dari tabel `petani`
 --
 
 CREATE TABLE `petani` (
@@ -214,20 +226,20 @@ CREATE TABLE `petani` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Dumping data for table `petani`
+-- Dumping data untuk tabel `petani`
 --
 
 INSERT INTO `petani` (`id_petani`, `nama_petani`, `email`, `password`, `telp`, `alamat_petani`, `foto_petani`, `status_akun`) VALUES
-(1, 'Suparman', 'suparman@petani.com', 'petani123', '0811500111', 'Desa Binderang, Lokpaikat', 'default.png', 'Aktif'),
+(1, 'Suparman', 'muh.hani21@gmail.com', 'petani123', '085787126487', 'Desa Binderang, Lokpaikat', 'avatar-2.jpg', 'Aktif'),
 (2, 'Paijo', 'paijo@petani.com', 'petani123', '0811500222', 'Desa Ayunan Papan, Lokpaikat', 'default.png', 'Aktif'),
 (3, 'Slamet Riyadi', 'slamet@petani.com', 'petani123', '0811500333', 'Desa Bitahan, Lokpaikat', 'default.png', 'Aktif'),
 (4, 'Joko Susilo', 'jokos@petani.com', 'petani123', '0811500444', 'Desa Bataratat, Lokpaikat', 'default.png', 'Aktif'),
-(5, 'Siti Aminah', 'sitia@petani.com', 'petani123', '0811500555', 'Desa Parandakan, Lokpaikat', 'default.png', 'Menunggu Verifikasi');
+(5, 'Siti Aminah', 'sitia@petani.com', 'petani123', '0811500555', 'Desa Parandakan, Lokpaikat', 'default.png', 'Non-Aktif');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `produk`
+-- Struktur dari tabel `produk`
 --
 
 CREATE TABLE `produk` (
@@ -241,24 +253,28 @@ CREATE TABLE `produk` (
   `stok` int(11) NOT NULL,
   `foto_produk` varchar(255) NOT NULL,
   `status_produk` enum('Tersedia','Habis') NOT NULL DEFAULT 'Tersedia',
-  `tgl_upload` timestamp NULL DEFAULT current_timestamp()
+  `tgl_upload` timestamp NULL DEFAULT current_timestamp(),
+  `minimum_pembelian` int(11) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Dumping data for table `produk`
+-- Dumping data untuk tabel `produk`
 --
 
-INSERT INTO `produk` (`id_produk`, `id_petani`, `id_kategori`, `nama_produk`, `deskripsi`, `harga`, `satuan`, `stok`, `foto_produk`, `status_produk`, `tgl_upload`) VALUES
-(1, 1, 1, 'Bayam Segar Organik', 'Bayam segar baru petik dari kebun, tanpa pestisida. Cocok untuk masakan bening.', '10000', 'ikat', 37, 'bayam organis.jpg', 'Tersedia', '2025-06-15 04:04:32'),
-(2, 2, 2, 'Mangga Harum Manis Super', 'Mangga Harum Manis pilihan, rasa manis dan legit. Berat rata-rata 0.5 kg per buah.', '22000', 'kg', 92, 'mangga harum manis.jpg', 'Tersedia', '2025-06-15 04:04:32'),
-(3, 3, 3, 'Singkong Mentega', 'Singkong jenis mentega, pulen dan cocok untuk direbus atau digoreng.', '12000', 'kg', 77, 'singkong mentega.jpg', 'Tersedia', '2025-06-15 04:04:32'),
-(4, 1, 4, 'Jahe Merah Asli', 'Jahe merah asli dari pegunungan, cocok untuk minuman kesehatan.', '15000', 'kg', 30, 'jahe merah.jpg', 'Tersedia', '2025-06-15 04:04:32'),
-(5, 4, 5, 'Beras Lokal Siam Unus', 'Beras unus asli dari sawah tadah hujan, pulen dan wangi.', '11000', 'kg', 195, 'beras siam.jpg', 'Tersedia', '2025-06-15 04:04:32');
+INSERT INTO `produk` (`id_produk`, `id_petani`, `id_kategori`, `nama_produk`, `deskripsi`, `harga`, `satuan`, `stok`, `foto_produk`, `status_produk`, `tgl_upload`, `minimum_pembelian`) VALUES
+(1, 1, 1, 'Bayam Segar Organik', 'Bayam segar baru petik dari kebun, tanpa pestisida. Cocok untuk masakan bening.', '10000', 'ikat', 30, 'bayam organis.jpg', 'Tersedia', '2025-06-15 04:04:32', 1),
+(2, 2, 2, 'Mangga Harum Manis Super', 'Mangga Harum Manis pilihan, rasa manis dan legit. Berat rata-rata 0.5 kg per buah.', '25000', 'kg', 91, 'mangga harum manis.jpg', 'Tersedia', '2025-06-15 04:04:32', 1),
+(3, 3, 3, 'Singkong Mentega', 'Singkong jenis mentega, pulen dan cocok untuk direbus atau digoreng.', '12000', 'kg', 77, 'singkong mentega.jpg', 'Tersedia', '2025-06-15 04:04:32', 1),
+(4, 1, 4, 'Jahe Merah Asli', 'Jahe merah asli dari pegunungan, cocok untuk minuman kesehatan.', '15000', 'kg', 0, 'jahe merah.jpg', 'Tersedia', '2025-06-15 04:04:32', 1),
+(5, 4, 5, 'Beras Lokal Siam Unus', 'Beras unus asli dari sawah tadah hujan, pulen dan wangi.', '10500', 'kg', 195, 'beras siam.jpg', 'Tersedia', '2025-06-15 04:04:32', 1),
+(6, 1, 2, 'Buah Naga', 'Buah naga (Inggris: pitaya) adalah buah dari beberapa jenis kaktus dari genus Hylocereus dan Selenicereus. Buah ini berasal dari Meksiko, Amerika Tengah dan Amerika Selatan namun sekarang juga dibudidayakan di negara-negara Asia seperti Taiwan, Vietnam, Filipina, Indonesia dan Malaysia. Buah ini juga dapat ditemui di Okinawa, Palestina, Australia utara dan Tiongkok selatan. Hylocereus hanya mekar pada malam hari.', '4500', 'Kg', 27, 'buah naga.jpg', 'Tersedia', '2025-07-05 06:53:55', 2),
+(7, 1, 2, 'Semangka', 'Semangka adalah buah yang populer, dikenal karena rasanya yang manis dan menyegarkan, serta kandungan airnya yang tinggi. Buah ini kaya akan nutrisi dan memiliki berbagai manfaat kesehatan, termasuk menjaga hidrasi, mendukung kesehatan jantung, dan berpotensi mengurangi risiko kanker. Semangka juga mengandung vitamin, mineral, dan antioksidan seperti likopen dan citrulline yang bermanfaat bagi tubuh. ', '8000', 'Kg', 89, 'sem.jpg', 'Tersedia', '2025-07-05 06:59:08', 1),
+(8, 1, 2, 'Mangga Segar', 'Mangga Segar Dan Manis ', '6700', 'buah', 13, 'product12.jpg', 'Tersedia', '2025-07-21 04:20:23', 5);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `riwayat_harga`
+-- Struktur dari tabel `riwayat_harga`
 --
 
 CREATE TABLE `riwayat_harga` (
@@ -270,7 +286,7 @@ CREATE TABLE `riwayat_harga` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Dumping data for table `riwayat_harga`
+-- Dumping data untuk tabel `riwayat_harga`
 --
 
 INSERT INTO `riwayat_harga` (`id_riwayat`, `id_produk`, `harga_lama`, `harga_baru`, `tgl_perubahan`) VALUES
@@ -280,12 +296,39 @@ INSERT INTO `riwayat_harga` (`id_riwayat`, `id_produk`, `harga_lama`, `harga_bar
 (4, 5, '10000', '11000', '2025-06-13 09:00:00'),
 (5, 4, '13000', '15000', '2025-06-14 09:00:00'),
 (6, 1, '5000', '8000', '2025-06-15 00:55:04'),
-(7, 1, '8000', '10000', '2025-06-15 01:03:46');
+(7, 1, '8000', '10000', '2025-06-15 01:03:46'),
+(8, 2, '22000', '25000', '2025-07-05 10:29:46'),
+(9, 8, '5000', '6000', '2025-08-01 18:44:01'),
+(10, 7, '0', '0', '2025-08-01 19:24:11'),
+(11, 7, '0', '0', '2025-08-01 19:24:11'),
+(12, 7, '5000', '5500', '2025-08-01 19:24:22'),
+(13, 7, '5000', '5500', '2025-08-01 19:24:22'),
+(14, 7, '0', '0', '2025-08-01 19:24:22'),
+(15, 8, '0', '0', '2025-08-01 19:25:09'),
+(16, 8, '0', '0', '2025-08-01 19:25:09'),
+(17, 8, '0', '0', '2025-08-01 19:28:22'),
+(18, 8, '0', '0', '2025-08-01 19:28:22'),
+(19, 8, '0', '0', '2025-08-01 19:30:25'),
+(20, 8, '0', '0', '2025-08-01 19:30:25'),
+(21, 8, '0', '0', '2025-08-01 19:33:15'),
+(22, 8, '0', '0', '2025-08-01 19:33:15'),
+(23, 8, '0', '0', '2025-08-01 19:33:15'),
+(24, 8, '6000', '6600', '2025-08-01 19:33:24'),
+(25, 8, '6000', '6600', '2025-08-01 19:33:24'),
+(26, 8, '0', '0', '2025-08-01 19:33:24'),
+(27, 8, '0', '0', '2025-08-01 19:33:25'),
+(28, 7, '0', '0', '2025-08-01 19:34:41'),
+(29, 7, '0', '0', '2025-08-01 19:34:41'),
+(30, 7, '0', '0', '2025-08-01 19:34:42'),
+(31, 7, '5500', '7500', '2025-08-01 19:36:26'),
+(32, 8, '6600', '6700', '2025-08-05 02:55:18'),
+(33, 7, '7500', '8000', '2025-08-05 02:55:56'),
+(34, 5, '11000', '10500', '2025-08-05 02:56:14');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `tracking_pengiriman`
+-- Struktur dari tabel `tracking_pengiriman`
 --
 
 CREATE TABLE `tracking_pengiriman` (
@@ -298,26 +341,31 @@ CREATE TABLE `tracking_pengiriman` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Dumping data for table `tracking_pengiriman`
+-- Dumping data untuk tabel `tracking_pengiriman`
 --
 
 INSERT INTO `tracking_pengiriman` (`id_tracking`, `id_pesanan`, `latitude`, `longitude`, `keterangan`, `waktu_update`) VALUES
 (8, 7, '-2.977756', '115.267883', 'Dijemput', '2025-06-15 05:41:00'),
 (9, 7, '-2.968156', '115.277550', 'Disortir', '2025-06-15 05:41:49'),
-(11, 7, '-2.960886', '115.276605', 'Pesanana diterima pembeli ', '2025-06-15 05:42:54');
+(11, 7, '-2.960886', '115.276605', 'Pesanana diterima pembeli ', '2025-06-15 05:42:54'),
+(12, 8, '-2.980842', '115.265786', 'Dalam Pengantran', '2025-07-05 07:22:18'),
+(13, 8, '-2.962670', '115.271969', 'Pos ', '2025-07-05 07:22:30'),
+(14, 8, '-2.953702', '115.264377', 'Pesanan diterima', '2025-07-05 07:22:45'),
+(25, 25, '-2.910879', '115.212619', 'Menjempu pesanan', '2025-08-05 02:47:12'),
+(26, 25, '-2.945030', '115.166623', 'sampai di tujuan ', '2025-08-05 02:48:12');
 
 --
 -- Indexes for dumped tables
 --
 
 --
--- Indexes for table `admin`
+-- Indeks untuk tabel `admin`
 --
 ALTER TABLE `admin`
   ADD PRIMARY KEY (`id_admin`);
 
 --
--- Indexes for table `detail_pesanan`
+-- Indeks untuk tabel `detail_pesanan`
 --
 ALTER TABLE `detail_pesanan`
   ADD PRIMARY KEY (`id_detail`),
@@ -325,33 +373,33 @@ ALTER TABLE `detail_pesanan`
   ADD KEY `id_produk` (`id_produk`);
 
 --
--- Indexes for table `kategori_produk`
+-- Indeks untuk tabel `kategori_produk`
 --
 ALTER TABLE `kategori_produk`
   ADD PRIMARY KEY (`id_kategori`);
 
 --
--- Indexes for table `kurir`
+-- Indeks untuk tabel `kurir`
 --
 ALTER TABLE `kurir`
   ADD PRIMARY KEY (`id_kurir`),
   ADD UNIQUE KEY `username` (`username`);
 
 --
--- Indexes for table `meta`
+-- Indeks untuk tabel `meta`
 --
 ALTER TABLE `meta`
   ADD PRIMARY KEY (`id_meta`);
 
 --
--- Indexes for table `pembeli`
+-- Indeks untuk tabel `pembeli`
 --
 ALTER TABLE `pembeli`
   ADD PRIMARY KEY (`id_pembeli`),
   ADD UNIQUE KEY `email` (`email`);
 
 --
--- Indexes for table `pesanan`
+-- Indeks untuk tabel `pesanan`
 --
 ALTER TABLE `pesanan`
   ADD PRIMARY KEY (`id_pesanan`),
@@ -360,14 +408,14 @@ ALTER TABLE `pesanan`
   ADD KEY `id_kurir` (`id_kurir`);
 
 --
--- Indexes for table `petani`
+-- Indeks untuk tabel `petani`
 --
 ALTER TABLE `petani`
   ADD PRIMARY KEY (`id_petani`),
   ADD UNIQUE KEY `email` (`email`);
 
 --
--- Indexes for table `produk`
+-- Indeks untuk tabel `produk`
 --
 ALTER TABLE `produk`
   ADD PRIMARY KEY (`id_produk`),
@@ -375,122 +423,122 @@ ALTER TABLE `produk`
   ADD KEY `id_kategori` (`id_kategori`);
 
 --
--- Indexes for table `riwayat_harga`
+-- Indeks untuk tabel `riwayat_harga`
 --
 ALTER TABLE `riwayat_harga`
   ADD PRIMARY KEY (`id_riwayat`),
   ADD KEY `id_produk` (`id_produk`);
 
 --
--- Indexes for table `tracking_pengiriman`
+-- Indeks untuk tabel `tracking_pengiriman`
 --
 ALTER TABLE `tracking_pengiriman`
   ADD PRIMARY KEY (`id_tracking`),
   ADD KEY `id_pesanan` (`id_pesanan`);
 
 --
--- AUTO_INCREMENT for dumped tables
+-- AUTO_INCREMENT untuk tabel yang dibuang
 --
 
 --
--- AUTO_INCREMENT for table `admin`
+-- AUTO_INCREMENT untuk tabel `admin`
 --
 ALTER TABLE `admin`
   MODIFY `id_admin` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT for table `detail_pesanan`
+-- AUTO_INCREMENT untuk tabel `detail_pesanan`
 --
 ALTER TABLE `detail_pesanan`
-  MODIFY `id_detail` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id_detail` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
--- AUTO_INCREMENT for table `kategori_produk`
+-- AUTO_INCREMENT untuk tabel `kategori_produk`
 --
 ALTER TABLE `kategori_produk`
-  MODIFY `id_kategori` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id_kategori` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
--- AUTO_INCREMENT for table `kurir`
+-- AUTO_INCREMENT untuk tabel `kurir`
 --
 ALTER TABLE `kurir`
   MODIFY `id_kurir` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
--- AUTO_INCREMENT for table `meta`
+-- AUTO_INCREMENT untuk tabel `meta`
 --
 ALTER TABLE `meta`
   MODIFY `id_meta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT for table `pembeli`
+-- AUTO_INCREMENT untuk tabel `pembeli`
 --
 ALTER TABLE `pembeli`
   MODIFY `id_pembeli` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
--- AUTO_INCREMENT for table `pesanan`
+-- AUTO_INCREMENT untuk tabel `pesanan`
 --
 ALTER TABLE `pesanan`
-  MODIFY `id_pesanan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id_pesanan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
--- AUTO_INCREMENT for table `petani`
+-- AUTO_INCREMENT untuk tabel `petani`
 --
 ALTER TABLE `petani`
   MODIFY `id_petani` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
--- AUTO_INCREMENT for table `produk`
+-- AUTO_INCREMENT untuk tabel `produk`
 --
 ALTER TABLE `produk`
-  MODIFY `id_produk` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id_produk` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
--- AUTO_INCREMENT for table `riwayat_harga`
+-- AUTO_INCREMENT untuk tabel `riwayat_harga`
 --
 ALTER TABLE `riwayat_harga`
-  MODIFY `id_riwayat` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id_riwayat` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
 --
--- AUTO_INCREMENT for table `tracking_pengiriman`
+-- AUTO_INCREMENT untuk tabel `tracking_pengiriman`
 --
 ALTER TABLE `tracking_pengiriman`
-  MODIFY `id_tracking` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id_tracking` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
--- Constraints for dumped tables
+-- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)
 --
 
 --
--- Constraints for table `detail_pesanan`
+-- Ketidakleluasaan untuk tabel `detail_pesanan`
 --
 ALTER TABLE `detail_pesanan`
   ADD CONSTRAINT `detail_pesanan_ibfk_1` FOREIGN KEY (`id_pesanan`) REFERENCES `pesanan` (`id_pesanan`) ON DELETE CASCADE,
   ADD CONSTRAINT `detail_pesanan_ibfk_2` FOREIGN KEY (`id_produk`) REFERENCES `produk` (`id_produk`) ON DELETE CASCADE;
 
 --
--- Constraints for table `pesanan`
+-- Ketidakleluasaan untuk tabel `pesanan`
 --
 ALTER TABLE `pesanan`
   ADD CONSTRAINT `pesanan_ibfk_1` FOREIGN KEY (`id_pembeli`) REFERENCES `pembeli` (`id_pembeli`) ON DELETE CASCADE,
   ADD CONSTRAINT `pesanan_ibfk_2` FOREIGN KEY (`id_kurir`) REFERENCES `kurir` (`id_kurir`) ON DELETE SET NULL;
 
 --
--- Constraints for table `produk`
+-- Ketidakleluasaan untuk tabel `produk`
 --
 ALTER TABLE `produk`
   ADD CONSTRAINT `produk_ibfk_1` FOREIGN KEY (`id_petani`) REFERENCES `petani` (`id_petani`) ON DELETE CASCADE,
   ADD CONSTRAINT `produk_ibfk_2` FOREIGN KEY (`id_kategori`) REFERENCES `kategori_produk` (`id_kategori`) ON DELETE CASCADE;
 
 --
--- Constraints for table `riwayat_harga`
+-- Ketidakleluasaan untuk tabel `riwayat_harga`
 --
 ALTER TABLE `riwayat_harga`
   ADD CONSTRAINT `riwayat_harga_ibfk_1` FOREIGN KEY (`id_produk`) REFERENCES `produk` (`id_produk`) ON DELETE CASCADE;
 
 --
--- Constraints for table `tracking_pengiriman`
+-- Ketidakleluasaan untuk tabel `tracking_pengiriman`
 --
 ALTER TABLE `tracking_pengiriman`
   ADD CONSTRAINT `tracking_pengiriman_ibfk_1` FOREIGN KEY (`id_pesanan`) REFERENCES `pesanan` (`id_pesanan`) ON DELETE CASCADE;
