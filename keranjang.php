@@ -131,7 +131,7 @@ if (isset($_POST['update_keranjang'])) {
                                                 <td class="product_name"><a href="detail_produk.php?id=<?= $id_produk; ?>"><?= $item['nama_produk']; ?></a></td>
                                                 <td class="product-price">Rp <?= number_format($item['harga']); ?></td>
                                                 <td class="product_quantity">
-                                                    <input min="1" max="<?= $item['stok']; ?>" value="<?= $jumlah; ?>" type="number" name="jumlah[<?= $id_produk; ?>]">
+                                                    <input min="<?= $item['minimum_pembelian']; ?>" max="<?= $item['stok']; ?>" value="<?= $jumlah; ?>" type="number" name="jumlah[<?= $id_produk; ?>]">
                                                 </td>
                                                 <td class="product_total">Rp <?= number_format($sub_total); ?></td>
                                             </tr>

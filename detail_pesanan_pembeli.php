@@ -28,30 +28,30 @@ $pesanan = $sql->fetch_assoc();
 $id_pesanan = $pesanan['id_pesanan'];
 ?>
 
-    <div class="breadcrumbs_area">
-        <div class="container">   
-            <div class="row">
-                <div class="col-12">
-                    <div class="breadcrumb_content">
-                        <h3>Detail Pesanan</h3>
-                        <ul>
-                            <li><a href="index.php">Home</a></li>
-                            <li><a href="akun.php">Akun Saya</a></li>
-                            <li>Detail Pesanan</li>
-                        </ul>
-                    </div>
+<div class="breadcrumbs_area">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="breadcrumb_content">
+                    <h3>Detail Pesanan</h3>
+                    <ul>
+                        <li><a href="index.php">Home</a></li>
+                        <li><a href="akun.php">Akun Saya</a></li>
+                        <li>Detail Pesanan</li>
+                    </ul>
                 </div>
             </div>
-        </div>         
+        </div>
     </div>
+</div>
 
-    <div class="checkout_page_bg">
-        <div class="container">
-            <div class="row">
-                <div class="col-12">
-                    <h4 class="mb-3">Detail untuk Invoice: <?= $pesanan['kode_invoice']; ?></h4>
+<div class="checkout_page_bg">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h4 class="mb-3">Detail untuk Invoice: <?= $pesanan['kode_invoice']; ?></h4>
 
-                    <?php if($pesanan['status_pesanan'] == 'Menunggu Pembayaran'): ?>
+                <?php if ($pesanan['status_pesanan'] == 'Menunggu Pembayaran'): ?>
                     <div class="alert alert-warning">
                         <strong>Harap Selesaikan Pembayaran Anda.</strong><br>
                         Silakan transfer sejumlah <strong>Rp <?= number_format($pesanan['total_bayar']); ?></strong> ke rekening berikut:
@@ -67,44 +67,44 @@ $id_pesanan = $pesanan['id_pesanan'];
                             </a>
                         </div>
                     </div>
-                    <?php endif; ?>
+                <?php endif; ?>
 
-                </div>
             </div>
-            <div class="row">
-                <div class="col-lg-6 col-md-6">
-                    <div class="card mb-3">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h5>Ringkasan Pesanan</h5>
-                            <?php
-                            // Tombol cetak hanya muncul jika statusnya relevan
-                            $status = $pesanan['status_pesanan'];
-                            if ($status == 'Menunggu Verifikasi' || $status == 'Diproses' || $status == 'Dikirim' || $status == 'Selesai') :
-                            ?>
-                                <a href="cetak_invoice.php?invoice=<?= $pesanan['kode_invoice']; ?>" target="_blank" class="btn btn-info btn-sm">
-                                    <i class="fa fa-print"></i> Cetak Invoice
-                                </a>
-                            <?php endif; ?>
-                        </div>
-                        <div class="card-body">
-                            <p><strong>Status:</strong> <?= $pesanan['status_pesanan']; ?></p>
-                            <p><strong>Tanggal:</strong> <?= date("d F Y, H:i", strtotime($pesanan['tgl_pesan'])); ?></p>
-                            <p><strong>Total Bayar:</strong> Rp <?= number_format($pesanan['total_bayar']); ?></p>
-                            <p><strong>Metode Pembayaran:</strong> <?= $pesanan['metode_pembayaran']; ?></p>
-                            <hr>
-                            <h5>Alamat Pengiriman</h5>
-                            <p><?= nl2br(htmlspecialchars($pesanan['alamat_pengiriman'])); ?></p>
-                        </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6 col-md-6">
+                <div class="card mb-3">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5>Ringkasan Pesanan</h5>
+                        <?php
+                        // Tombol cetak hanya muncul jika statusnya relevan
+                        $status = $pesanan['status_pesanan'];
+                        if ($status == 'Menunggu Verifikasi' || $status == 'Diproses' || $status == 'Dikirim' || $status == 'Selesai') :
+                        ?>
+                            <a href="cetak_invoice.php?invoice=<?= $pesanan['kode_invoice']; ?>" target="_blank" class="btn btn-info btn-sm">
+                                <i class="fa fa-print"></i> Cetak Invoice
+                            </a>
+                        <?php endif; ?>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Status:</strong> <?= $pesanan['status_pesanan']; ?></p>
+                        <p><strong>Tanggal:</strong> <?= date("d F Y, H:i", strtotime($pesanan['tgl_pesan'])); ?></p>
+                        <p><strong>Total Bayar:</strong> Rp <?= number_format($pesanan['total_bayar']); ?></p>
+                        <p><strong>Metode Pembayaran:</strong> <?= $pesanan['metode_pembayaran']; ?></p>
+                        <hr>
+                        <h5>Alamat Pengiriman</h5>
+                        <p><?= nl2br(htmlspecialchars($pesanan['alamat_pengiriman'])); ?></p>
                     </div>
                 </div>
-                <div class="col-lg-6 col-md-6">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5>Item yang Dipesan</h5>
-                        </div>
-                        <div class="card-body table-responsive">
-                            <table class="table">
-                                <tbody>
+            </div>
+            <div class="col-lg-6 col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Item yang Dipesan</h5>
+                    </div>
+                    <div class="card-body table-responsive">
+                        <table class="table">
+                            <tbody>
                                 <?php
                                 $ambil_detail = $con->query("SELECT dp.*, pr.nama_produk
                                     FROM detail_pesanan dp
@@ -118,27 +118,41 @@ $id_pesanan = $pesanan['id_pesanan'];
                                         <td class="text-end">Rp <?= number_format($item['sub_total']); ?></td>
                                     </tr>
                                 <?php } ?>
-                                    <tr class="fw-bold">
-                                        <td colspan="2">Subtotal</td>
-                                        <td class="text-end">Rp <?= number_format($pesanan['total_bayar'] - $pesanan['ongkir']); ?></td>
-                                    </tr>
-                                    <tr class="fw-bold">
-                                        <td colspan="2">Ongkos Kirim</td>
-                                        <td class="text-end">Rp <?= number_format($pesanan['ongkir']); ?></td>
-                                    </tr>
-                                    <tr class="fw-bold table-active">
-                                        <td colspan="2">Grand Total</td>
-                                        <td class="text-end">Rp <?= number_format($pesanan['total_bayar']); ?></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                                <tr class="fw-bold">
+                                    <td colspan="2">Subtotal</td>
+                                    <td class="text-end">Rp <?= number_format($pesanan['total_bayar'] - $pesanan['ongkir']); ?></td>
+                                </tr>
+                                <tr class="fw-bold">
+                                    <td colspan="2">Ongkos Kirim</td>
+                                    <td class="text-end">Rp <?= number_format($pesanan['ongkir']); ?></td>
+                                </tr>
+                                <tr class="fw-bold table-active">
+                                    <td colspan="2">Grand Total</td>
+                                    <td class="text-end">Rp <?= number_format($pesanan['total_bayar']); ?></td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
-             <a href="akun.php" class="btn btn-secondary mt-3"><i class="fa fa-arrow-left"></i> Kembali ke Riwayat Pesanan</a>
+            <div class="col-lg-6 col-md-6">
+                <?php if (!empty($pesanan['bukti_sampai'])): ?>
+                    <div class=" card mb-3">
+                        <div class="card-header">
+                            <label><strong>Bukti Sampai:</strong></label><br>
+                        </div>
+                        <img src="../../images/bukti_sampai/<?= htmlspecialchars($pesanan['bukti_sampai']); ?>" alt="Bukti Sampai" class="img-fluid img-thumbnail" style="max-width: 300px;">
+                    </div>
+                <?php else: ?>
+                    <div class="mt-3 text-muted">
+                        <em>Bukti sampai belum diunggah.</em>
+                    </div>
+                <?php endif; ?>
+            </div>
         </div>
+        <a href="akun.php" class="btn btn-secondary mt-3"><i class="fa fa-arrow-left"></i> Kembali ke Riwayat Pesanan</a>
     </div>
+</div>
 
 <?php
 include 'footer.php';
