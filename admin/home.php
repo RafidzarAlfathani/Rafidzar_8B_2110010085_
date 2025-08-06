@@ -147,6 +147,16 @@ elseif ($user_level == 'Petani') :
                                         WHERE pr.id_petani = '$id_petani_login' AND ps.status_pesanan != 'Dibatalkan'
                                         GROUP BY pr.id_produk, pr.nama_produk
                                         ORDER BY total_terjual DESC LIMIT 5");
+
+    // Hitung total dana yang sudah ditarik (status Disetujui)
+    $dana_ditarik = $con->query("SELECT SUM(jumlah_dana) as total_ditarik FROM pengajuan_dana_petani 
+                             WHERE id_petani = '$id_petani_login' AND status = 'Disetujui'")
+                   ->fetch_assoc()['total_ditarik'] ?? 0;
+
+    // Hitung sisa saldo
+    $sisa_saldo = $pendapatan_total_saya - $dana_ditarik;
+    if ($sisa_saldo < 0) $sisa_saldo = 0;
+
 ?>
     <div class="alert alert-success" role="alert">
         <h4 class="alert-heading">Selamat Datang, <?= htmlspecialchars($_SESSION['user_nama']); ?>!</h4>
@@ -156,7 +166,27 @@ elseif ($user_level == 'Petani') :
     <div class="row mb-25">
         <div class="col-lg-4 col-md-6 col-sm-6"><div class="card card-stats"><div class="card-body"><div class="row"><div class="col-5"><div class="icon-big text-center"><i class="fa fa-cubes text-primary"></i></div></div><div class="col-7 d-flex align-items-center"><div class="numbers"><p class="card-category">Jumlah Produk Saya</p><h4 class="card-title"><?= number_format($total_produk_saya); ?></h4></div></div></div></div></div></div>
         <div class="col-lg-4 col-md-6 col-sm-6"><div class="card card-stats"><div class="card-body"><div class="row"><div class="col-5"><div class="icon-big text-center"><i class="fa fa-shopping-cart text-danger"></i></div></div><div class="col-7 d-flex align-items-center"><div class="numbers"><p class="card-category">Pesanan Aktif</p><h4 class="card-title"><?= number_format($pesanan_aktif_saya); ?></h4></div></div></div></div></div></div>
-        <div class="col-lg-4 col-md-6 col-sm-6"><div class="card card-stats"><div class="card-body"><div class="row"><div class="col-5"><div class="icon-big text-center"><i class="fa fa-wallet text-success"></i></div></div><div class="col-7 d-flex align-items-center"><div class="numbers"><p class="card-category">Total Pendapatan</p><h4 class="card-title">Rp <?= number_format($pendapatan_total_saya); ?></h4></div></div></div></div></div></div>
+        <!-- <div class="col-lg-4 col-md-6 col-sm-6"><div class="card card-stats"><div class="card-body"><div class="row"><div class="col-5"><div class="icon-big text-center"><i class="fa fa-wallet text-success"></i></div></div><div class="col-7 d-flex align-items-center"><div class="numbers"><p class="card-category">Total Pendapatan</p><h4 class="card-title">Rp <?= number_format($pendapatan_total_saya); ?></h4></div></div></div></div></div></div> -->
+  
+        <div class="col-lg-4 col-md-6 col-sm-6">
+            <div class="card card-stats">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-5">
+                            <div class="icon-big text-center">
+                                <i class="fa fa-coins text-warning"></i>
+                            </div>
+                        </div>
+                        <div class="col-7 d-flex align-items-center">
+                            <div class="numbers">
+                                <p class="card-category">Sisa Saldo</p>
+                                <h4 class="card-title">Rp <?= number_format($sisa_saldo, 0, ',', '.'); ?></h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="row">
@@ -200,11 +230,55 @@ elseif ($user_level == 'Kurir') :
                                  WHERE id_kurir = '$id_kurir_login'
                                  GROUP BY status_pesanan");
     
-    $data_chart_kurir = [];
-    while($data = $q_status_kurir->fetch_assoc()){
-        $data_chart_kurir[] = ['name' => $data['status_pesanan'], 'y' => (int)$data['jumlah']];
-    }
+// ===================================================================
+// --- LOGIKA PERHITUNGAN SISA SALDO UNTUK KURIR 🚚 ---
+// ===================================================================
+
+$id_kurir_login = $user_id;
+
+// Ambil total pendapatan dari pesanan yang sudah selesai
+$q_total_pendapatan = $con->query("
+    SELECT SUM(ongkir) AS total 
+    FROM pesanan 
+    WHERE id_kurir = '$id_kurir_login' AND status_pesanan = 'Selesai'
+");
+
+$total_pendapatan = 0;
+if ($q_total_pendapatan) {
+    $data_pendapatan = $q_total_pendapatan->fetch_assoc();
+    $total_pendapatan = (int) ($data_pendapatan['total'] ?? 0);
+} else {
+    echo "<script>console.error('Query pendapatan gagal: " . $con->error . "');</script>";
+}
+
+// Ambil total penarikan dana yang sudah disetujui
+$q_total_tarik = $con->query("
+    SELECT SUM(jumlah_dana) AS total 
+    FROM pengajuan_dana_kurir 
+    WHERE id_kurir = '$id_kurir_login' AND status = 'Disetujui'
+");
+
+$total_tarik = 0;
+if ($q_total_tarik) {
+    $data_tarik = $q_total_tarik->fetch_assoc();
+    $total_tarik = (int) ($data_tarik['total'] ?? 0);
+} else {
+    echo "<script>console.error('Query penarikan gagal: " . $con->error . "');</script>";
+}
+
+// Hitung sisa saldo
+$sisa_saldo = $total_pendapatan - $total_tarik;
+if ($sisa_saldo < 0) $sisa_saldo = 0;
+
+// Debug (opsional, hapus di produksi)
+echo "<pre>";
+echo "Total Pendapatan: Rp " . number_format($total_pendapatan, 0, ',', '.') . "\n";
+echo "Total Penarikan Disetujui: Rp " . number_format($total_tarik, 0, ',', '.') . "\n";
+echo "Sisa Saldo: Rp " . number_format($sisa_saldo, 0, ',', '.') . "\n";
+echo "</pre>";
+
 ?>
+
     <div class="alert alert-info" role="alert">
         <h4 class="alert-heading">Halo, Kurir <?= htmlspecialchars($_SESSION['user_nama']); ?>!</h4>
         <p>Berikut adalah ringkasan tugas pengiriman Anda. Mohon segera proses pesanan yang perlu dikirim.</p>
@@ -214,6 +288,25 @@ elseif ($user_level == 'Kurir') :
         <div class="col-lg-4 col-md-6 col-sm-6"><div class="card card-stats"><div class="card-body"><div class="row"><div class="col-5"><div class="icon-big text-center"><i class="fa fa-box-open text-warning"></i></div></div><div class="col-7 d-flex align-items-center"><div class="numbers"><p class="card-category">Perlu Dikirim</p><h4 class="card-title"><?= number_format($perlu_dikirim); ?></h4></div></div></div></div></div></div>
         <div class="col-lg-4 col-md-6 col-sm-6"><div class="card card-stats"><div class="card-body"><div class="row"><div class="col-5"><div class="icon-big text-center"><i class="fa fa-truck text-info"></i></div></div><div class="col-7 d-flex align-items-center"><div class="numbers"><p class="card-category">Sedang Dikirim</p><h4 class="card-title"><?= number_format($sedang_dikirim); ?></h4></div></div></div></div></div></div>
         <div class="col-lg-4 col-md-6 col-sm-6"><div class="card card-stats"><div class="card-body"><div class="row"><div class="col-5"><div class="icon-big text-center"><i class="fa fa-star text-primary"></i></div></div><div class="col-7 d-flex align-items-center"><div class="numbers"><p class="card-category">Total Pesanan Selesai</p><h4 class="card-title"><?= number_format($selesai_total); ?></h4></div></div></div></div></div></div>
+        <div class="col-lg-4 col-md-6 col-sm-6">
+        <div class="card card-stats">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-5">
+                        <div class="icon-big text-center">
+                            <i class="fa fa-wallet text-success"></i>
+                        </div>
+                    </div>
+                    <div class="col-7 d-flex align-items-center">
+                        <div class="numbers">
+                            <p class="card-category">Sisa Saldo Anda</p>
+                            <h4 class="card-title">Rp <?= number_format($sisa_saldo, 0, ',', '.'); ?></h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
     </div>
 
     <div class="row">

@@ -164,15 +164,15 @@ if (!$has_access) {
                     </div>
                 <?php endif; ?>
                 <?php if (!empty($pesanan['bukti_sampai'])): ?>
-    <div class=" card mb-3">
-        <label><strong>Bukti Sampai:</strong></label><br>
-        <img src="../../images/bukti_sampai/<?= htmlspecialchars($pesanan['bukti_sampai']); ?>" alt="Bukti Sampai" class="img-fluid img-thumbnail" style="max-width: 300px;">
-    </div>
-<?php else: ?>
-    <div class="mt-3 text-muted">
-        <em>Bukti  sampai belum diunggah.</em>
-    </div>
-<?php endif; ?>
+                    <div class=" card mb-3">
+                        <label><strong>Bukti Sampai:</strong></label><br>
+                        <img src="../../images/bukti_sampai/<?= htmlspecialchars($pesanan['bukti_sampai']); ?>" alt="Bukti Sampai" class="img-fluid img-thumbnail" style="max-width: 300px;">
+                    </div>
+                <?php else: ?>
+                    <div class="mt-3 text-muted">
+                        <em>Bukti sampai belum diunggah.</em>
+                    </div>
+                <?php endif; ?>
 
 
                 <div class="card">
@@ -242,6 +242,73 @@ if (!$has_access) {
                             </form>
                         <?php endif; // Akhir dari pengecekan status Selesai/Dibatalkan 
                         ?>
+
+                        <?php
+                        if (isset($_POST['update_pesanan'])) {
+                            $status_baru = $_POST['status_pesanan'];
+                            $id_kurir_baru = isset($_POST['id_kurir']) ? $_POST['id_kurir'] : null;
+
+                            // Update status pesanan
+                            $id_kurir_sql_part = ($user_level == 'Admin' || $user_level == 'Pimpinan') ? ", id_kurir = " . ($id_kurir_baru ? "'$id_kurir_baru'" : "NULL") : "";
+
+                            $con->query("UPDATE pesanan SET status_pesanan = '$status_baru' $id_kurir_sql_part WHERE id_pesanan = '$id_pesanan'");
+
+                            // Kirim notifikasi ke petani hanya jika status menjadi 'Diproses'
+                            if ($status_baru == 'Diproses') {
+                                // Ambil data petani terkait produk dalam pesanan
+                                $petani_result = $con->query("
+            SELECT DISTINCT pt.nama_petani, pt.telp 
+            FROM detail_pesanan dp
+            JOIN produk p ON dp.id_produk = p.id_produk
+            JOIN petani pt ON p.id_petani = pt.id_petani
+            WHERE dp.id_pesanan = '$id_pesanan'
+        ");
+
+                                while ($pt = $petani_result->fetch_assoc()) {
+                                    $nama_petani = $pt['nama_petani'];
+                                    $telp = $pt['telp'];
+                                    $no_wa = '62' . substr($telp, 1); // ubah format 08 menjadi 628
+
+                                    // Isi pesan untuk petani
+                                    $pesan = "Halo *$nama_petani*,\n\n"
+                                        . "Pesanan dengan kode *$pesanan[kode_invoice]* sudah *Diproses*. "
+                                        . "Silakan persiapkan produk untuk pengiriman.\n\n"
+                                        . "Terima kasih 🙏";
+
+                                    // Kirim via API Fonnte
+                                    $token = "7HY2322NXBXt4LKDVpkU"; // ganti dengan token Fonnte Anda
+
+                                    $curl = curl_init();
+                                    curl_setopt_array($curl, array(
+                                        CURLOPT_URL => "https://api.fonnte.com/send",
+                                        CURLOPT_RETURNTRANSFER => true,
+                                        CURLOPT_POST => true,
+                                        CURLOPT_POSTFIELDS => array(
+                                            'target' => $no_wa,
+                                            'message' => $pesan,
+                                            'countryCode' => '62', // opsional
+                                        ),
+                                        CURLOPT_HTTPHEADER => array(
+                                            "Authorization: $token"
+                                        ),
+                                    ));
+
+                                    $response = curl_exec($curl);
+                                    curl_close($curl);
+                                }
+                            }
+
+                            if ($con->query($query) === TRUE) {
+                                echo "<script>
+                                        Swal.fire({ icon: 'success', title: 'Berhasil!', text: 'Status pesanan berhasil diperbarui.' })
+                                        .then((result) => { if (result.isConfirmed) { document.location.href = '?page=pesanan&aksi=detail&id_pesanan=$id_pesanan'; } });
+                                      </script>";
+                            } else {
+                                echo "<script> Swal.fire({ icon: 'error', title: 'Gagal!', text: 'Terjadi kesalahan.' }); </script>";
+                            }
+                        }
+                        ?>
+
 
                         <?php
                         // 🛡️ Kunci Keamanan: Proses update hanya jika pesanan belum selesai
@@ -316,7 +383,6 @@ if (!$has_access) {
                                 }
                             }
 
-
                             if ($con->query($query) === TRUE) {
                                 echo "<script>
                                         Swal.fire({ icon: 'success', title: 'Berhasil!', text: 'Status pesanan berhasil diperbarui.' })
@@ -332,7 +398,7 @@ if (!$has_access) {
                 <a href="?page=pesanan" class="btn btn-danger btn-sm mt-3">Kembali ke Daftar Pesanan</a>
                 <br>
                 <?php if ($pesanan['status_pesanan'] == 'Selesai' && empty($pesanan['bukti_sampai'])): ?>
-                   <a href="?page=pesanan&aksi=upload_bukti_sampai&id_pesanan=<?= $pesanan['id_pesanan']; ?>" class="btn btn-primary btn-sm mt-3">📷 Upload Bukti Sampai</a>
+                    <a href="?page=pesanan&aksi=upload_bukti_sampai&id_pesanan=<?= $pesanan['id_pesanan']; ?>" class="btn btn-primary btn-sm mt-3">📷 Upload Bukti Sampai</a>
                 <?php endif; ?>
             </div>
         </div>

@@ -100,7 +100,7 @@ $info_periode = ($tgl_mulai_filter && $tgl_selesai_filter) ? "Periode Transaksi:
     </table>
 
     <div class="ttd-section">
-        Banjarbaru, <?= tgl_indo(date('Y-m-d')); ?><br>
+        Lokpaikat, <?= tgl_indo(date('Y-m-d')); ?><br>
         Mengetahui,<br>
         Pimpinan
         <br><br><br><br><br>

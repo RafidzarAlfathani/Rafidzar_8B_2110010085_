@@ -103,7 +103,7 @@ if ($status_filter) { $info_filter[] = "Status: " . htmlspecialchars($status_fil
     </table>
 
     <div class="ttd-section">
-        Banjarbaru, <?= tgl_indo(date('Y-m-d')); ?><br>
+        Lokpaikat, <?= tgl_indo(date('Y-m-d')); ?><br>
         Mengetahui,<br>
         Pimpinan
         <br><br><br><br><br>
