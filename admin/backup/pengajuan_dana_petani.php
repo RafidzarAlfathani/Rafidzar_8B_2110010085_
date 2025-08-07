@@ -48,10 +48,10 @@ if (isset($_POST['submit'])) {
         echo "<script>alert('Jumlah dana melebihi sisa saldo!');</script>";
     } else {
         $query = mysqli_query($con, "INSERT INTO pengajuan_dana_petani 
-            (id_petani, jumlah_dana, metode, catatan, status, tanggal_pengajuan) 
-            VALUES 
-            ('$id_petani', '$jumlah_dana', '$metode', '$catatan', 'Menunggu', '$tanggal_pengajuan')
-        ");
+    (id_petani, jumlah_dana, metode, nama_bank, no_rekening, catatan, status, tanggal_pengajuan) 
+    VALUES 
+    ('$id_petani', '$jumlah_dana', '$metode', '$nama_bank', '$no_rekening', '$catatan', 'Menunggu', '$tanggal_pengajuan')
+");
 
         if ($query) {
             echo "<script>alert('Pengajuan berhasil diajukan!'); window.location='index.php';</script>";
@@ -60,6 +60,10 @@ if (isset($_POST['submit'])) {
         }
     }
 }
+
+$nama_bank = mysqli_real_escape_string($con, $_POST['nama_bank'] ?? '');
+$no_rekening = mysqli_real_escape_string($con, $_POST['no_rekening'] ?? '');
+
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -74,6 +78,13 @@ if (isset($_POST['submit'])) {
     <div class="panel">
         <div class="panel-body">
             <div class="card-header">Form Pengajuan Penarikan Dana</div>
+            <p>Biaya Tranfer Beda bank akan dibebankan pada anda, Bank yg digunakan :</p>
+            <ul>
+                <li>Bank XYZ</li>
+                <li>Bank ABC</li>
+            </ul>
+            <hr>
+            <p>Saran Gunakan Metode Penarikan Cash di Balai</p>
             <div class="card-body">
                 <form method="POST">
                     <label>Nama Petani:</label><br>
@@ -91,14 +102,39 @@ if (isset($_POST['submit'])) {
                     <label>Metode Penarikan:</label><br>
                     <select name="metode" required>
                         <option value="">-- Pilih Metode --</option>
-                        <!-- <option value="Transfer">Transfer</option> -->
+                        <option value="Transfer">Transfer</option>
                         <option value="Cash di Balai">Cash di Balai</option>
                     </select><br><br>
+                    <div id="bank_transfer_fields" style="display: none;">
+                        <label>Nama Bank:</label><br>
+                        <input type="text" name="nama_bank" placeholder="Contoh: BRI" /><br><br>
+
+                        <label>No Rekening Penerima:</label><br>
+                        <input type="text" name="no_rekening" placeholder="Contoh: 1234567890" /><br><br>
+                    </div>
 
                     <label>Catatan / Keterangan:</label><br>
                     <textarea name="catatan" rows="4" placeholder="Contoh: Dana untuk beli bibit..." required></textarea><br><br>
+
                     <button type="submit" name="submit" class="btn btn-primary btn-sm">Ajukan Penarikan</button>
                 </form>
             </div>
 </body>
+<?php
+
+
+?>
+
 </html>
+<script>
+    const metodeSelect = document.querySelector('select[name="metode"]');
+    const bankFields = document.getElementById('bank_transfer_fields');
+
+    metodeSelect.addEventListener('change', function() {
+        if (this.value === 'Transfer') {
+            bankFields.style.display = 'block';
+        } else {
+            bankFields.style.display = 'none';
+        }
+    });
+</script>
