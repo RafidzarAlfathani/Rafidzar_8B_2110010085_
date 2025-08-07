@@ -133,7 +133,7 @@ elseif ($user_level == 'Petani') :
                                         JOIN pesanan ps ON dp.id_pesanan = ps.id_pesanan
                                         JOIN produk pr ON dp.id_produk = pr.id_produk
                                         WHERE pr.id_petani = '$id_petani_login' AND ps.status_pesanan = 'Selesai'")->fetch_assoc()['total'] ?? 0;
-    
+
     // Pesanan aktif yang mengandung produknya
     $pesanan_aktif_saya = $con->query("SELECT COUNT(DISTINCT ps.id_pesanan) as total FROM pesanan ps
                                     JOIN detail_pesanan dp ON ps.id_pesanan = dp.id_pesanan

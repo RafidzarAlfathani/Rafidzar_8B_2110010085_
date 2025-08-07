@@ -222,12 +222,15 @@ if (!$has_access) {
                                     </div>
                                     <button type="submit" name="update_pesanan" class="btn btn-success w-100">Update Pesanan</button>
 
-                                <?php elseif ($user_level == 'Kurir' && $pesanan['status_pesanan'] == 'Dikirim'): ?>
+                                <?php elseif ($user_level == 'Kurir' && in_array($pesanan['status_pesanan'], ['Diproses', 'Dikirim'])): ?>
                                     <div class="mb-3">
                                         <label class="form-label">Ubah Status Pesanan</label>
                                         <select name="status_pesanan" class="form-control" required>
-                                            <option value="Dikirim" selected>Dikirim</option>
-                                            <option value="Selesai">Selesai</option>
+                                            <?php if ($pesanan['status_pesanan'] == 'Diproses'): ?>
+                                                <option value="Dikirim">Dikirim</option>
+                                            <?php elseif ($pesanan['status_pesanan'] == 'Dikirim'): ?>
+                                                <option value="Selesai">Selesai</option>
+                                            <?php endif; ?>
                                         </select>
                                     </div>
                                     <button type="submit" name="update_pesanan" class="btn btn-success w-100">Update Status</button>
