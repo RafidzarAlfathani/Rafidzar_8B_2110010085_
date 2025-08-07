@@ -10,12 +10,11 @@ if (!isset($_SESSION['user_level']) || $_SESSION['user_level'] !== 'Petani') {
 }
 
 $id_petani = $_SESSION['user_id'];
-
 ?>
 
 <div class="panel">
     <div class="panel-header d-flex justify-content-between align-items-center">
-        <h4>Riwayat Penarikan Dana</h4>
+        <h4>Riwayat Pengajuan Dana</h4>
         <a href="?page=penarikan_dana&aksi=petani_pengajuan" class="btn btn-primary">+ Pengajuan Baru</a>
     </div>
 
@@ -28,27 +27,23 @@ $id_petani = $_SESSION['user_id'];
                         <th>Jumlah Dana</th>
                         <th>Metode</th>
                         <th>Status</th>
-                        <th>Catatan Petani</th>
-                        <th>Tanggal Penarikan</th>
+                        <th>Catatan</th>
+                        <th>Tanggal Pengajuan</th>
+                        <th>Tanggal Verifikasi</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php
                     $query = mysqli_query($con, "
-    SELECT r.*, p.nama_petani, a.catatan 
-    FROM riwayat_penarikan_dana r
-    JOIN petani p ON r.id_petani = p.id_petani
-    JOIN pengajuan_dana_petani a ON r.id_pengajuan = a.id_pengajuan
-    WHERE r.id_petani = '$id_petani'
-    ORDER BY r.tanggal_penarikan DESC
-");
-                    ?>
+                        SELECT * FROM pengajuan_dana_petani
+                        WHERE id_petani = '$id_petani'
+                        ORDER BY tanggal_pengajuan DESC
+                    ");
 
-                    <?php
                     if (mysqli_num_rows($query) == 0) {
                     ?>
                         <tr>
-                            <td colspan="6" class="text-center">Belum ada riwayat penarikan dana.</td>
+                            <td colspan="7" class="text-center">Belum ada pengajuan dana.</td>
                         </tr>
                     <?php
                     } else {
@@ -56,15 +51,15 @@ $id_petani = $_SESSION['user_id'];
                         while ($row = mysqli_fetch_assoc($query)) {
                     ?>
                             <tr>
-                                <td><?= $no ?></td>
+                                <td><?= $no++ ?></td>
                                 <td>Rp <?= number_format($row['jumlah_dana'], 0, ',', '.') ?></td>
-                                <td><?= $row['metode_penarikan'] ?></td>
-                                <td><?= $row['status_penarikan'] ?></td>
-                                <td><?= htmlspecialchars($row['catatan']) ?></td>
-                                <td><?= date('d-m-Y', strtotime($row['tanggal_penarikan'])) ?></td>
+                                <td><?= htmlspecialchars($row['metode']) ?></td>
+                                <td><?= $row['status'] ?></td>
+                                <td><?= htmlspecialchars($row['catatan'] ?? '-') ?></td>
+                                <td><?= date('d-m-Y H:i', strtotime($row['tanggal_pengajuan'])) ?></td>
+                                <td><?= $row['tanggal_verifikasi'] ? date('d-m-Y H:i', strtotime($row['tanggal_verifikasi'])) : '-' ?></td>
                             </tr>
                     <?php
-                            $no++;
                         }
                     }
                     ?>
