@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 06 Agu 2025 pada 09.05
+-- Waktu pembuatan: 08 Agu 2025 pada 10.35
 -- Versi server: 10.4.11-MariaDB
 -- Versi PHP: 7.4.4
 
@@ -76,7 +76,18 @@ INSERT INTO `detail_pesanan` (`id_detail`, `id_pesanan`, `id_produk`, `jumlah`, 
 (31, 25, 8, 5, '6600', '33000'),
 (32, 26, 7, 3, '8000', '24000'),
 (33, 27, 7, 3, '9000', '27000'),
-(34, 28, 2, 5, '25000', '125000');
+(34, 28, 2, 5, '25000', '125000'),
+(35, 29, 6, 2, '4500', '9000'),
+(36, 30, 6, 2, '4500', '9000'),
+(37, 31, 2, 4, '25000', '100000'),
+(38, 32, 7, 4, '9000', '36000'),
+(39, 33, 7, 5, '9000', '45000'),
+(40, 34, 7, 7, '9000', '63000'),
+(41, 35, 8, 5, '6700', '33500'),
+(42, 36, 6, 7, '4500', '31500'),
+(43, 37, 7, 4, '9000', '36000'),
+(44, 38, 7, 5, '9000', '45000'),
+(45, 39, 7, 1, '9000', '9000');
 
 -- --------------------------------------------------------
 
@@ -200,7 +211,10 @@ CREATE TABLE `pengajuan_dana_kurir` (
 --
 
 INSERT INTO `pengajuan_dana_kurir` (`id_pengajuan`, `id_kurir`, `jumlah_dana`, `metode`, `catatan`, `status`, `tanggal_verifikasi`, `diverifikasi_oleh`, `tanggal_pengajuan`) VALUES
-(1, 3, '8000.00', 'Cash di Balai', 'beli bensin', 'Disetujui', '2025-08-06 08:17:43', 'Admin Utama', '2025-08-06 07:43:11');
+(1, 3, '8000.00', 'Cash di Balai', 'beli bensin', 'Disetujui', '2025-08-06 08:17:43', 'Admin Utama', '2025-08-06 07:43:11'),
+(2, 3, '5000.00', 'Cash di Balai', 'beli minum', 'Menunggu', NULL, NULL, '2025-08-07 00:00:00'),
+(3, 3, '10000.00', 'Cash di Balai', 'coba aja', 'Menunggu', NULL, NULL, '2025-08-07 00:00:00'),
+(4, 3, '1000.00', 'Cash di Balai', 'beli beras', 'Menunggu', NULL, NULL, '2025-08-08 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -238,7 +252,9 @@ INSERT INTO `pengajuan_dana_petani` (`id_pengajuan`, `id_petani`, `jumlah_dana`,
 (13, 1, 10500, 'Transfer', 'cek lagi boss', 'Disetujui', '2025-08-06 00:00:00', '2025-08-06 08:26:47', 0),
 (14, 1, 3000, 'Transfer', 'cekkkkkk', 'Disetujui', '2025-08-06 00:00:00', '2025-08-06 08:28:47', 0),
 (15, 1, 1000, 'Cash di Balai', 'cek.......', 'Disetujui', '2025-08-06 00:00:00', '2025-08-06 08:31:03', 0),
-(16, 1, 16, 'Transfer', 'cek hapus bos', 'Ditolak', '2025-08-06 00:00:00', '2025-08-06 08:44:22', 0);
+(16, 1, 16, 'Transfer', 'cek hapus bos', 'Ditolak', '2025-08-06 00:00:00', '2025-08-06 08:44:22', 0),
+(26, 1, 10000, 'Cash di Balai', 'beli chiky', 'Menunggu', '2025-08-07 00:00:00', NULL, NULL),
+(27, 1, 5000, 'Cash di Balai', 'hhhhh', 'Menunggu', '2025-08-07 00:00:00', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -276,7 +292,18 @@ INSERT INTO `pesanan` (`id_pesanan`, `kode_invoice`, `id_pembeli`, `id_kurir`, `
 (25, 'INV-20250805-104405-2', 2, 3, 'handil bakti', '48000', '15000', '2025-08-05 02:44:05', 'Selesai', 'Transfer Bank', 'INV-20250805-104405-2_1754361865.jpg', '2025-08-05 10:44:25', 'bukti_sampai_25_1754362128.jpg', 0),
 (26, 'INV-20250805-190416-2', 2, NULL, 'binderanggg', '39000', '15000', '2025-08-05 11:04:16', 'Selesai', 'Transfer Bank', NULL, NULL, NULL, 0),
 (27, 'INV-20250805-202639-2', 2, NULL, 'hhhhh', '42000', '15000', '2025-08-05 12:26:39', 'Selesai', 'Transfer Bank', 'INV-20250805-202639-2_1754396856.jpg', '2025-08-05 20:27:36', NULL, 0),
-(28, 'INV-20250806-145430-2', 2, NULL, 'binderang lokapikat', '141500', '15000', '2025-08-06 06:54:30', 'Menunggu Pembayaran', 'Transfer Bank', NULL, NULL, NULL, 1500);
+(28, 'INV-20250806-145430-2', 2, 3, 'binderang lokapikat', '141500', '15000', '2025-08-06 06:54:30', 'Diproses', 'Transfer Bank', 'INV-20250806-145430-2_1754465580.jpg', '2025-08-06 15:33:00', NULL, 1500),
+(29, 'INV-20250807-110206-2', 2, 3, 'ahndil bakti', '25500', '15000', '2025-08-07 03:02:06', 'Dikirim', 'Transfer Bank', 'INV-20250807-110206-2_1754535769.jpg', '2025-08-07 11:02:49', NULL, 1500),
+(30, 'INV-20250807-114611-2', 2, NULL, 'nnnnn', '25500', '15000', '2025-08-07 03:46:11', 'Menunggu Pembayaran', 'Transfer Bank', NULL, NULL, NULL, 1500),
+(31, 'INV-20250807-114809-2', 2, 3, 'taes', '116500', '15000', '2025-08-07 03:48:09', 'Diproses', 'Transfer Bank', NULL, NULL, NULL, 1500),
+(32, 'INV-20250807-115813-2', 2, 2, 'handil bakti', '52500', '15000', '2025-08-07 03:58:13', 'Diproses', 'Transfer Bank', NULL, NULL, NULL, 1500),
+(33, 'INV-20250807-115956-2', 2, 3, 'adyaksa', '61500', '15000', '2025-08-07 03:59:56', 'Dikirim', 'Transfer Bank', 'INV-20250807-115956-2_1754539217.jpg', '2025-08-07 12:00:17', NULL, 1500),
+(34, 'INV-20250807-121828-2', 2, 2, 'handil bakti indah', '79500', '15000', '2025-08-07 04:18:28', 'Selesai', 'Transfer Bank', 'INV-20250807-121828-2_1754540342.jpg', '2025-08-07 12:19:02', NULL, 1500),
+(35, 'INV-20250807-123135-2', 2, 2, 'tes ', '50000', '15000', '2025-08-07 04:31:35', 'Selesai', 'Transfer Bank', NULL, NULL, NULL, 1500),
+(36, 'INV-20250807-124540-2', 2, 2, 'banjarmasin', '48000', '15000', '2025-08-07 04:45:40', 'Selesai', 'Transfer Bank', 'INV-20250807-124540-2_1754541962.jpg', '2025-08-07 12:46:02', 'bukti_sampai_36_1754542146.jpg', 1500),
+(37, 'INV-20250807-125323-2', 2, 2, 'handiiiil bakti ', '52500', '15000', '2025-08-07 04:53:23', 'Selesai', 'Transfer Bank', 'INV-20250807-125323-2_1754542419.jpg', '2025-08-07 12:53:39', 'bukti_sampai_37_1754542592.jpg', 1500),
+(38, 'INV-20250807-130845-2', 2, 2, 'saaaaaaaa', '61500', '15000', '2025-08-07 05:08:45', 'Selesai', 'Transfer Bank', 'INV-20250807-130845-2_1754543348.jpg', '2025-08-07 13:09:08', 'bukti_sampai_38_1754543543.jpg', 1500),
+(39, 'INV-20250807-153916-2', 2, NULL, 'nnnnnnnnn', '25500', '15000', '2025-08-07 07:39:16', 'Selesai', 'Transfer Bank', 'INV-20250807-153916-2_1754631068.jpg', '2025-08-08 13:31:08', NULL, 1500);
 
 -- --------------------------------------------------------
 
@@ -333,13 +360,13 @@ CREATE TABLE `produk` (
 
 INSERT INTO `produk` (`id_produk`, `id_petani`, `id_kategori`, `nama_produk`, `deskripsi`, `harga`, `satuan`, `stok`, `foto_produk`, `status_produk`, `tgl_upload`, `minimum_pembelian`) VALUES
 (1, 1, 1, 'Bayam Segar Organik', 'Bayam segar baru petik dari kebun, tanpa pestisida. Cocok untuk masakan bening.', '10000', 'ikat', 30, 'bayam organis.jpg', 'Tersedia', '2025-06-15 04:04:32', 1),
-(2, 2, 2, 'Mangga Harum Manis Super', 'Mangga Harum Manis pilihan, rasa manis dan legit. Berat rata-rata 0.5 kg per buah.', '25000', 'kg', 86, 'mangga harum manis.jpg', 'Tersedia', '2025-06-15 04:04:32', 1),
+(2, 2, 2, 'Mangga Harum Manis Super', 'Mangga Harum Manis pilihan, rasa manis dan legit. Berat rata-rata 0.5 kg per buah.', '25000', 'kg', 82, 'mangga harum manis.jpg', 'Tersedia', '2025-06-15 04:04:32', 1),
 (3, 3, 3, 'Singkong Mentega', 'Singkong jenis mentega, pulen dan cocok untuk direbus atau digoreng.', '12000', 'kg', 77, 'singkong mentega.jpg', 'Tersedia', '2025-06-15 04:04:32', 1),
 (4, 1, 4, 'Jahe Merah Asli', 'Jahe merah asli dari pegunungan, cocok untuk minuman kesehatan.', '15000', 'kg', 0, 'jahe merah.jpg', 'Tersedia', '2025-06-15 04:04:32', 1),
 (5, 4, 5, 'Beras Lokal Siam Unus', 'Beras unus asli dari sawah tadah hujan, pulen dan wangi.', '10500', 'kg', 195, 'beras siam.jpg', 'Tersedia', '2025-06-15 04:04:32', 1),
-(6, 1, 2, 'Buah Naga', 'Buah naga (Inggris: pitaya) adalah buah dari beberapa jenis kaktus dari genus Hylocereus dan Selenicereus. Buah ini berasal dari Meksiko, Amerika Tengah dan Amerika Selatan namun sekarang juga dibudidayakan di negara-negara Asia seperti Taiwan, Vietnam, Filipina, Indonesia dan Malaysia. Buah ini juga dapat ditemui di Okinawa, Palestina, Australia utara dan Tiongkok selatan. Hylocereus hanya mekar pada malam hari.', '4500', 'Kg', 27, 'buah naga.jpg', 'Tersedia', '2025-07-05 06:53:55', 2),
-(7, 1, 2, 'Semangka', 'Semangka adalah buah yang populer, dikenal karena rasanya yang manis dan menyegarkan, serta kandungan airnya yang tinggi. Buah ini kaya akan nutrisi dan memiliki berbagai manfaat kesehatan, termasuk menjaga hidrasi, mendukung kesehatan jantung, dan berpotensi mengurangi risiko kanker. Semangka juga mengandung vitamin, mineral, dan antioksidan seperti likopen dan citrulline yang bermanfaat bagi tubuh. ', '9000', 'Kg', 83, 'sem.jpg', 'Tersedia', '2025-07-05 06:59:08', 1),
-(8, 1, 2, 'Mangga Segar', 'Mangga Segar Dan Manis ', '6700', 'buah', 13, 'product12.jpg', 'Tersedia', '2025-07-21 04:20:23', 5);
+(6, 1, 2, 'Buah Naga', 'Buah naga (Inggris: pitaya) adalah buah dari beberapa jenis kaktus dari genus Hylocereus dan Selenicereus. Buah ini berasal dari Meksiko, Amerika Tengah dan Amerika Selatan namun sekarang juga dibudidayakan di negara-negara Asia seperti Taiwan, Vietnam, Filipina, Indonesia dan Malaysia. Buah ini juga dapat ditemui di Okinawa, Palestina, Australia utara dan Tiongkok selatan. Hylocereus hanya mekar pada malam hari.', '4500', 'Kg', 16, 'buah naga.jpg', 'Tersedia', '2025-07-05 06:53:55', 2),
+(7, 1, 2, 'Semangka', 'Semangka adalah buah yang populer, dikenal karena rasanya yang manis dan menyegarkan, serta kandungan airnya yang tinggi. Buah ini kaya akan nutrisi dan memiliki berbagai manfaat kesehatan, termasuk menjaga hidrasi, mendukung kesehatan jantung, dan berpotensi mengurangi risiko kanker. Semangka juga mengandung vitamin, mineral, dan antioksidan seperti likopen dan citrulline yang bermanfaat bagi tubuh. ', '9000', 'Kg', 57, 'sem.jpg', 'Tersedia', '2025-07-05 06:59:08', 1),
+(8, 1, 2, 'Mangga Segar', 'Mangga Segar Dan Manis ', '6700', 'buah', 8, 'product12.jpg', 'Tersedia', '2025-07-21 04:20:23', 5);
 
 -- --------------------------------------------------------
 
@@ -399,35 +426,6 @@ INSERT INTO `riwayat_harga` (`id_riwayat`, `id_produk`, `harga_lama`, `harga_bar
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `riwayat_penarikan_dana`
---
-
-CREATE TABLE `riwayat_penarikan_dana` (
-  `id_riwayat` int(11) NOT NULL,
-  `id_pengajuan` int(11) NOT NULL,
-  `id_petani` int(11) NOT NULL,
-  `jumlah_dana` decimal(12,2) NOT NULL,
-  `metode_penarikan` varchar(50) NOT NULL,
-  `status_penarikan` varchar(20) NOT NULL DEFAULT 'diproses',
-  `tanggal_penarikan` datetime DEFAULT current_timestamp(),
-  `catatan_admin` text DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data untuk tabel `riwayat_penarikan_dana`
---
-
-INSERT INTO `riwayat_penarikan_dana` (`id_riwayat`, `id_pengajuan`, `id_petani`, `jumlah_dana`, `metode_penarikan`, `status_penarikan`, `tanggal_penarikan`, `catatan_admin`) VALUES
-(1, 5, 1, '15000.00', '', 'Disetujui', '2025-08-06 00:00:00', ''),
-(2, 6, 1, '3000.00', '', 'Disetujui', '2025-08-06 00:00:00', ''),
-(3, 7, 1, '20000.00', 'transfer', 'Disetujui', '2025-08-06 00:00:00', ''),
-(4, 8, 1, '12000.00', 'Cash di Balai', 'Disetujui', '2025-08-06 00:00:00', ''),
-(5, 9, 1, '5000.00', 'Cash di Balai', 'Disetujui', '2025-08-06 00:00:00', ''),
-(6, 11, 2, '30000.00', 'Cash di Balai', 'Disetujui', '2025-08-06 00:00:00', '');
-
--- --------------------------------------------------------
-
---
 -- Struktur dari tabel `tracking_pengiriman`
 --
 
@@ -452,7 +450,18 @@ INSERT INTO `tracking_pengiriman` (`id_tracking`, `id_pesanan`, `latitude`, `lon
 (13, 8, '-2.962670', '115.271969', 'Pos ', '2025-07-05 07:22:30'),
 (14, 8, '-2.953702', '115.264377', 'Pesanan diterima', '2025-07-05 07:22:45'),
 (25, 25, '-2.910879', '115.212619', 'Menjempu pesanan', '2025-08-05 02:47:12'),
-(26, 25, '-2.945030', '115.166623', 'sampai di tujuan ', '2025-08-05 02:48:12');
+(26, 25, '-2.945030', '115.166623', 'sampai di tujuan ', '2025-08-05 02:48:12'),
+(27, 29, '-2.982813', '115.268297', 'melakukan pengiriman', '2025-08-07 04:06:24'),
+(28, 29, '-2.978939', '115.269247', 'di tengah perjalanan', '2025-08-07 04:06:48'),
+(29, 34, '-2.9818', '115.2662', 'melakukan pengiriman', '2025-08-07 04:24:26'),
+(30, 34, '-2.9818', '115.2662', 'ditengah perjalanan', '2025-08-07 04:24:43'),
+(31, 34, '-2.977567', '115.268904', 'medekati tujuan', '2025-08-07 04:26:17'),
+(32, 36, '-2.9818', '115.2662', 'mengirim', '2025-08-07 04:47:56'),
+(33, 36, '-2.977567', '115.269591', 'sampai pos depan', '2025-08-07 04:48:19'),
+(34, 37, '-2.9818', '115.2662', 'melakukan pengiriman', '2025-08-07 04:55:44'),
+(35, 37, '-2.972939', '115.273109', 'sampai pos depan', '2025-08-07 04:56:04'),
+(36, 38, '-2.9818', '115.2662', 'mengirim pesanan', '2025-08-07 05:11:19'),
+(37, 38, '-2.975767', '115.274997', 'sampai pos', '2025-08-07 05:11:38');
 
 --
 -- Indexes for dumped tables
@@ -544,14 +553,6 @@ ALTER TABLE `riwayat_harga`
   ADD KEY `id_produk` (`id_produk`);
 
 --
--- Indeks untuk tabel `riwayat_penarikan_dana`
---
-ALTER TABLE `riwayat_penarikan_dana`
-  ADD PRIMARY KEY (`id_riwayat`),
-  ADD KEY `id_pengajuan` (`id_pengajuan`),
-  ADD KEY `id_petani` (`id_petani`);
-
---
 -- Indeks untuk tabel `tracking_pengiriman`
 --
 ALTER TABLE `tracking_pengiriman`
@@ -572,7 +573,7 @@ ALTER TABLE `admin`
 -- AUTO_INCREMENT untuk tabel `detail_pesanan`
 --
 ALTER TABLE `detail_pesanan`
-  MODIFY `id_detail` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
+  MODIFY `id_detail` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
 
 --
 -- AUTO_INCREMENT untuk tabel `kategori_produk`
@@ -602,19 +603,19 @@ ALTER TABLE `pembeli`
 -- AUTO_INCREMENT untuk tabel `pengajuan_dana_kurir`
 --
 ALTER TABLE `pengajuan_dana_kurir`
-  MODIFY `id_pengajuan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_pengajuan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT untuk tabel `pengajuan_dana_petani`
 --
 ALTER TABLE `pengajuan_dana_petani`
-  MODIFY `id_pengajuan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id_pengajuan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT untuk tabel `pesanan`
 --
 ALTER TABLE `pesanan`
-  MODIFY `id_pesanan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+  MODIFY `id_pesanan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
 -- AUTO_INCREMENT untuk tabel `petani`
@@ -635,16 +636,10 @@ ALTER TABLE `riwayat_harga`
   MODIFY `id_riwayat` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 
 --
--- AUTO_INCREMENT untuk tabel `riwayat_penarikan_dana`
---
-ALTER TABLE `riwayat_penarikan_dana`
-  MODIFY `id_riwayat` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
-
---
 -- AUTO_INCREMENT untuk tabel `tracking_pengiriman`
 --
 ALTER TABLE `tracking_pengiriman`
-  MODIFY `id_tracking` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id_tracking` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)
@@ -688,13 +683,6 @@ ALTER TABLE `produk`
 --
 ALTER TABLE `riwayat_harga`
   ADD CONSTRAINT `riwayat_harga_ibfk_1` FOREIGN KEY (`id_produk`) REFERENCES `produk` (`id_produk`) ON DELETE CASCADE;
-
---
--- Ketidakleluasaan untuk tabel `riwayat_penarikan_dana`
---
-ALTER TABLE `riwayat_penarikan_dana`
-  ADD CONSTRAINT `riwayat_penarikan_dana_ibfk_1` FOREIGN KEY (`id_pengajuan`) REFERENCES `pengajuan_dana_petani` (`id_pengajuan`) ON DELETE CASCADE,
-  ADD CONSTRAINT `riwayat_penarikan_dana_ibfk_2` FOREIGN KEY (`id_petani`) REFERENCES `petani` (`id_petani`) ON DELETE CASCADE;
 
 --
 -- Ketidakleluasaan untuk tabel `tracking_pengiriman`
