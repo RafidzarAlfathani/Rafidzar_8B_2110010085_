@@ -3,7 +3,6 @@
 $sql_data = "SELECT 
                 pt.id_petani,
                 pt.nama_petani,
-                pt.telp,
                 COALESCE(SUM(dp.sub_total), 0) AS total_pendapatan
              FROM petani pt
              LEFT JOIN produk pr ON pt.id_petani = pr.id_petani
@@ -38,7 +37,8 @@ $ambil_data = $con->query($sql_data);
                                     <tr>
                                         <th class="text-center">Peringkat</th>
                                         <th>Nama Petani</th>
-                                        <th>Telepon</th>
+                                        <th class="text-end">Total Pendapatan</th>
+                                        <th class="text-end">Total Penarikan</th>
                                         <th class="text-end">Sisa Saldo</th>
                                     </tr>
                                 </thead>
@@ -46,9 +46,9 @@ $ambil_data = $con->query($sql_data);
                                     <?php if ($ambil_data->num_rows > 0): 
                                         $nomor = 1; 
                                         while ($petani = $ambil_data->fetch_assoc()):
-                                            // Ambil total dana yang sudah ditarik oleh petani ini
                                             $id_petani = $petani['id_petani'];
-                                            $query_tarik = $con->query("SELECT SUM(jumlah_dana) as total_tarik FROM pengajuan_dana_petani WHERE id_petani = '$id_petani' AND status = 'Disetujui'");
+                                            // Ambil total dana yang sudah ditarik oleh petani ini
+                                            $query_tarik = $con->query("SELECT COALESCE(SUM(jumlah_dana), 0) as total_tarik FROM pengajuan_dana_petani WHERE id_petani = '$id_petani' AND status = 'Disetujui'");
                                             $dana_ditarik = $query_tarik->fetch_assoc()['total_tarik'] ?? 0;
 
                                             $sisa_saldo = $petani['total_pendapatan'] - $dana_ditarik;
@@ -63,11 +63,12 @@ $ambil_data = $con->query($sql_data);
                                             <?php endif; ?>
                                         </td>
                                         <td><?= htmlspecialchars($petani['nama_petani']); ?></td>
-                                        <td><?= htmlspecialchars($petani['telp']); ?></td>
-                                        <td class="text-end"><strong>Rp <?= number_format($sisa_saldo, 0, ',', '.'); ?></strong></td>
+                                        <td class="text-end">Rp <?= number_format($petani['total_pendapatan'], 0, ',', '.'); ?></td>
+                                        <td class="text-end">Rp <?= number_format($dana_ditarik, 0, ',', '.'); ?></td>
+                                        <td class="text-end text-success fw-bold">Rp <?= number_format($sisa_saldo, 0, ',', '.'); ?></td>
                                     </tr>
                                     <?php endwhile; else: ?>
-                                    <tr><td colspan="4" class="text-center">Data tidak ditemukan.</td></tr>
+                                    <tr><td colspan="5" class="text-center">Data tidak ditemukan.</td></tr>
                                     <?php endif; ?>
                                 </tbody>
                             </table>

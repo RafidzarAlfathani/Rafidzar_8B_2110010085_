@@ -8,33 +8,30 @@ ob_start();
 
 // 2. Include Koneksi & Data
 include "../../inc/koneksi.php";
-include "../../inc/tanggal.php"; 
+include "../../inc/tanggal.php";
 
-// 4. Query Data Sisa Saldo Petani
+// 3. Query Data Sisa Saldo Petani dengan total pendapatan dan total penarikan
 $sql_data = "
 SELECT 
     pt.nama_petani,
-    pt.telp,
-    (
-        IFNULL((
-            SELECT SUM(dp.sub_total)
-            FROM produk pr 
-            JOIN detail_pesanan dp ON pr.id_produk = dp.id_produk
-            JOIN pesanan ps ON dp.id_pesanan = ps.id_pesanan
-            WHERE pr.id_petani = pt.id_petani
-              AND ps.status_pesanan = 'Selesai'";
-
-$sql_data .= "
-        ), 0)
-        -
-        IFNULL((
-            SELECT SUM(pdp.jumlah_dana)
-            FROM pengajuan_dana_petani pdp
-            WHERE pdp.id_petani = pt.id_petani
-              AND pdp.status = 'Disetujui'
-        ), 0)
-    ) AS sisa_saldo
+    COALESCE(SUM(dp.sub_total), 0) AS total_pendapatan,
+    COALESCE((
+        SELECT SUM(pdp.jumlah_dana)
+        FROM pengajuan_dana_petani pdp
+        WHERE pdp.id_petani = pt.id_petani
+          AND pdp.status = 'Disetujui'
+    ), 0) AS total_tarik,
+    COALESCE(SUM(dp.sub_total), 0) - COALESCE((
+        SELECT SUM(pdp.jumlah_dana)
+        FROM pengajuan_dana_petani pdp
+        WHERE pdp.id_petani = pt.id_petani
+          AND pdp.status = 'Disetujui'
+    ), 0) AS sisa_saldo
 FROM petani pt
+LEFT JOIN produk pr ON pt.id_petani = pr.id_petani
+LEFT JOIN detail_pesanan dp ON pr.id_produk = dp.id_produk
+LEFT JOIN pesanan ps ON dp.id_pesanan = ps.id_pesanan AND ps.status_pesanan = 'Selesai'
+GROUP BY pt.id_petani
 ORDER BY sisa_saldo DESC
 ";
 
@@ -57,6 +54,7 @@ $ambil_data = $con->query($sql_data);
         .data-table { width: 100%; border-collapse: collapse; font-size: 10px; }
         .data-table th, .data-table td { border: 1px solid #333; padding: 8px; }
         .data-table th { background-color: #f2f2f2; font-weight: bold; text-align: center; }
+        .data-table td.text-right { text-align: right; }
         .ttd-section { margin-top: 50px; text-align: right; }
     </style>
 </head>
@@ -79,9 +77,10 @@ $ambil_data = $con->query($sql_data);
     <table class="data-table">
         <thead>
             <tr>
-                <th>No.</th>
+                <th style="width: 40px;">No.</th>
                 <th style="text-align: left;">Nama Petani</th>
-                <th style="text-align: left;">Telepon</th>
+                <th style="text-align: right;">Total Pendapatan</th>
+                <th style="text-align: right;">Total Penarikan</th>
                 <th style="text-align: right;">Sisa Saldo</th>
             </tr>
         </thead>
@@ -90,11 +89,12 @@ $ambil_data = $con->query($sql_data);
                 <tr>
                     <td style="text-align: center;"><?= $no++; ?></td>
                     <td><?= htmlspecialchars($petani['nama_petani']); ?></td>
-                    <td><?= htmlspecialchars($petani['telp']); ?></td>
-                    <td style="text-align: right;">Rp <?= number_format($petani['sisa_saldo'], 0, ',', '.'); ?></td>
+                    <td class="text-right">Rp <?= number_format($petani['total_pendapatan'], 0, ',', '.'); ?></td>
+                    <td class="text-right">Rp <?= number_format($petani['total_tarik'], 0, ',', '.'); ?></td>
+                    <td class="text-right">Rp <?= number_format(max($petani['sisa_saldo'], 0), 0, ',', '.'); ?></td>
                 </tr>
             <?php endwhile; else: ?>
-                <tr><td colspan="4" style="text-align: center;">Data tidak ditemukan.</td></tr>
+                <tr><td colspan="5" style="text-align: center;">Data tidak ditemukan.</td></tr>
             <?php endif; ?>
         </tbody>
     </table>

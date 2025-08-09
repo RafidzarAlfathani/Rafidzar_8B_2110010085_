@@ -10,9 +10,9 @@ if (!isset($_SESSION['user_level']) || $_SESSION['user_level'] !== 'Petani') {
 }
 
 $id_petani = $_SESSION['user_id'];
-$nama_petani = $_SESSION['user_nama'] ?? 'Petani'; // fallback jika $admin['nama'] tidak tersedia
+$nama_petani = $_SESSION['user_nama'] ?? 'Petani';
 
-// Hitung total pendapatan dari penjualan produk oleh petani ini (pesanan selesai)
+// Hitung total pendapatan dari penjualan produk (pesanan selesai)
 $q_pendapatan = mysqli_query($con, "
     SELECT SUM(dp.sub_total) AS total_pendapatan
     FROM detail_pesanan dp
@@ -22,7 +22,7 @@ $q_pendapatan = mysqli_query($con, "
 ");
 $pendapatan = mysqli_fetch_assoc($q_pendapatan)['total_pendapatan'] ?? 0;
 
-// Hitung total dana yang sudah ditarik (Disetujui)
+// Hitung total dana yang sudah ditarik
 $q_ditarik = mysqli_query($con, "
     SELECT SUM(jumlah_dana) AS total_ditarik
     FROM pengajuan_dana_petani
@@ -32,10 +32,9 @@ $ditarik = mysqli_fetch_assoc($q_ditarik)['total_ditarik'] ?? 0;
 
 // Hitung sisa saldo
 $sisa_saldo = $pendapatan - $ditarik;
-if ($sisa_saldo < 0) $sisa_saldo = 0; // antisipasi negatif jika ada kesalahan data
+if ($sisa_saldo < 0) $sisa_saldo = 0;
 
-
-// Proses form jika disubmit
+// Proses form
 if (isset($_POST['submit'])) {
     $jumlah_dana = (int) $_POST['jumlah_dana'];
     $metode = mysqli_real_escape_string($con, $_POST['metode']);
@@ -54,51 +53,87 @@ if (isset($_POST['submit'])) {
         ");
 
         if ($query) {
-            echo "<script>alert('Pengajuan berhasil diajukan!'); window.location='index.php';</script>";
+            echo "<script>
+                Swal.fire({ icon: 'success', title: 'Berhasil!', text: 'Pengajuan berhasil diajukan.' })
+                .then(() => { window.location='?page=penarikan_dana'; });
+            </script>";
         } else {
-            echo "<script>alert('Terjadi kesalahan saat menyimpan pengajuan.');</script>";
+            echo "<script>
+                Swal.fire({ icon: 'error', title: 'Gagal!', text: 'Terjadi kesalahan saat menyimpan pengajuan.' });
+            </script>";
         }
     }
 }
 ?>
-<!DOCTYPE html>
-<html lang="id">
 
-<head>
-    <meta charset="UTF-8">
-    <title>Pengajuan Penarikan Dana</title>
-    <link rel="stylesheet" href="assets/css/style.css"> <!-- Sesuaikan jika perlu -->
-</head>
-
-<body>
-    <div class="panel">
-        <div class="panel-body">
-            <div class="card-header">Form Pengajuan Penarikan Dana</div>
-            <div class="card-body">
-                <form method="POST">
-                    <label>Nama Petani:</label><br>
-                    <input type="text" value="<?= htmlspecialchars($nama_petani); ?>" disabled><br><br>
-
-                    <label>Sisa Saldo Anda (Rp):</label><br>
-                    <input type="text" value="<?= number_format($sisa_saldo, 0, ',', '.') ?>" disabled><br><br>
-
-                    <label>Tanggal Pengajuan:</label><br>
-                    <input type="text" value="<?= tgl_indo(date('Y-m-d')) ?>" disabled><br><br>
-
-                    <label>Jumlah Dana yang Diajukan (Rp):</label><br>
-                    <input type="number" class="form-control" name="jumlah_dana" required><br><br>
-
-                    <label>Metode Penarikan:</label><br>
-                    <select name="metode" required>
-                        <option value="">-- Pilih Metode --</option>
-                        <!-- <option value="Transfer">Transfer</option> -->
-                        <option value="Cash di Balai">Cash di Balai</option>
-                    </select><br><br>
-
-                    <label>Catatan / Keterangan:</label><br>
-                    <textarea name="catatan" rows="4" placeholder="Contoh: Dana untuk beli bibit..." required></textarea><br><br>
-                    <button type="submit" name="submit" class="btn btn-primary btn-sm">Ajukan Penarikan</button>
-                </form>
+<div class="row">
+    <div class="col-12">
+        <div class="panel">
+            <div class="panel-header">
+                <h5>Pengajuan Penarikan Dana</h5>
             </div>
-</body>
-</html>
+            <div class="panel-body">
+                <div class="card mb-20">
+                    <div class="card-header">Form Pengajuan</div>
+                    <div class="card-body">
+                        <form method="POST">
+                            <div class="row mb-2">
+                                <label class="col-sm-3 col-form-label">Nama Petani</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" value="<?= htmlspecialchars($nama_petani); ?>" readonly>
+                                </div>
+                            </div>
+
+                            <div class="row mb-2">
+                                <label class="col-sm-3 col-form-label">Sisa Saldo (Rp)</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" value="<?= number_format($sisa_saldo, 0, ',', '.') ?>" readonly>
+                                </div>
+                            </div>
+
+                            <div class="row mb-2">
+                                <label class="col-sm-3 col-form-label">Tanggal Pengajuan</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" value="<?= tgl_indo(date('Y-m-d')) ?>" readonly>
+                                </div>
+                            </div>
+
+                            <div class="row mb-2">
+                                <label class="col-sm-3 col-form-label">Jumlah Dana Ditarik(Rp)</label>
+                                <div class="col-sm-9">
+                                    <input type="number" class="form-control" name="jumlah_dana" required>
+                                </div>
+                            </div>
+
+                            <div class="row mb-2">
+                                <label class="col-sm-3 col-form-label">Metode Penarikan</label>
+                                <div class="col-sm-9">
+                                    <select name="metode" class="form-control" required>
+                                        <option value="">-- Pilih Metode --</option>
+                                        <option value="Cash di Balai">Cash di Balai</option>
+                                        <!-- <option value="Transfer">Transfer</option> -->
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row mb-2">
+                                <label class="col-sm-3 col-form-label">Catatan / Keterangan</label>
+                                <div class="col-sm-9">
+                                    <textarea name="catatan" class="form-control" rows="3" placeholder="Contoh: Dana untuk beli bibit..." required></textarea>
+                                </div>
+                            </div>
+
+                            <div class="row mb-2">
+                                <label class="col-sm-3 col-form-label">&nbsp;</label>
+                                <div class="col-sm-9">
+                                    <button type="submit" name="submit" class="btn btn-primary btn-sm">Ajukan Penarikan</button>
+                                    <a href="index.php" class="btn btn-danger btn-sm">Kembali</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -120,10 +120,13 @@ if (isset($_SESSION['user_level'])) {
                                 </li>
                             <?php endif; ?>
 
-                            <?php if (in_array($user_level, ['Admin', 'Pimpinan', 'Petani'])): ?>
+                            <?php if (in_array($user_level, ['Admin', 'Pimpinan',])): ?>
                                 <li class="sidebar-dropdown-item">
                                     <a href="?page=pembeli" class="sidebar-link"><span class="nav-icon"><i class="fa-light fa-users"></i></span> <span class="sidebar-txt">Pembeli</span></a>
                                 </li>
+                            <?php endif; ?>
+
+                            <?php if (in_array($user_level, ['Admin', 'Pimpinan', 'Petani'])): ?>
                                 <li class="sidebar-dropdown-item">
                                     <a href="?page=produk" class="sidebar-link"><span class="nav-icon"><i class="fa-light fa-box"></i></span> <span class="sidebar-txt">Produk</span></a>
                                 </li>

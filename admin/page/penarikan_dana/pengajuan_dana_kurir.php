@@ -64,37 +64,79 @@ if (isset($_POST['ajukan'])) {
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
-<div class="panel">
-    <div class="panel-body">
-        <div class="card-header">Form Pengajuan Penarikan Dana Kurir</div>
-        <div class="card-body">
-            <?= $pesan ?>
-            <form method="POST">
-                <label>Nama Kurir:</label><br>
-                <input type="text" value="<?= htmlspecialchars($nama_kurir); ?>" disabled><br><br>
+<div class="row">
+    <div class="col-12">
+        <div class="panel">
+            <div class="panel-header">
+                <h5>Pengajuan Penarikan Dana Kurir</h5>
+            </div>
+            <div class="panel-body">
+                <div class="card mb-20">
+                    <div class="card-header">Form Pengajuan</div>
+                    <div class="card-body">
+                        <?= $pesan ?>
+                        <form method="POST">
+                            
+                            <div class="row mb-2">
+                                <label class="col-sm-3 col-form-label">Nama Kurir</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" value="<?= htmlspecialchars($nama_kurir); ?>" disabled>
+                                </div>
+                            </div>
 
-                <label>Sisa Saldo Anda (Rp):</label><br>
-                <input type="text" value="<?= number_format($sisa_saldo, 0, ',', '.') ?>" disabled><br><br>
+                            <div class="row mb-2">
+                                <label class="col-sm-3 col-form-label">Sisa Saldo Anda (Rp)</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" value="<?= number_format($sisa_saldo, 0, ',', '.') ?>" disabled>
+                                </div>
+                            </div>
 
-                <label>Tanggal Pengajuan:</label><br>
-                <input type="text" value="<?= tgl_indo(date('Y-m-d')) ?>" disabled><br><br>
+                            <div class="row mb-2">
+                                <label class="col-sm-3 col-form-label">Tanggal Pengajuan</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" value="<?= tgl_indo(date('Y-m-d')) ?>" disabled>
+                                </div>
+                            </div>
 
-                <label>Jumlah Dana yang Diajukan (Rp):</label><br>
-                <input type="number" class="form-control" name="jumlah_dana" required><br><br>
+                            <div class="row mb-2">
+                                <label class="col-sm-3 col-form-label">Jumlah Dana (Rp)</label>
+                                <div class="col-sm-9">
+                                    <input type="number" class="form-control" name="jumlah_dana" required>
+                                </div>
+                            </div>
 
-                <label>Metode Penarikan:</label><br>
-                <select name="metode" required>
-                    <option value="">-- Pilih Metode --</option>
-                    <!-- <option value="Transfer">Transfer</option> -->
-                    <option value="Cash di Balai">Cash di Balai</option>
-                </select><br><br>
+                            <div class="row mb-2">
+                                <label class="col-sm-3 col-form-label">Metode Penarikan</label>
+                                <div class="col-sm-9">
+                                    <select class="form-control" name="metode" required>
+                                        <option value="">-- Pilih Metode --</option>
+                                        <!-- <option value="Transfer">Transfer</option> -->
+                                        <option value="Cash di Balai">Cash di Balai</option>
+                                    </select>
+                                </div>
+                            </div>
 
-                <label>Catatan / Keterangan:</label><br>
-                <textarea name="catatan" rows="4" placeholder="Contoh: Dana untuk kebutuhan bahan bakar..." required></textarea><br><br>
-                <button type="submit" name="ajukan" class="btn btn-primary btn-sm">Ajukan Penarikan</button>
-            </form>
+                            <div class="row mb-3">
+                                <label class="col-sm-3 col-form-label">Catatan / Keterangan</label>
+                                <div class="col-sm-9">
+                                    <textarea class="form-control" name="catatan" rows="4" placeholder="Contoh: Dana untuk kebutuhan bahan bakar..." required></textarea>
+                                </div>
+                            </div>
+
+                            <div class="row mb-2">
+                                <label class="col-sm-3 col-form-label">&nbsp;</label>
+                                <div class="col-sm-9">
+                                    <button type="submit" name="ajukan" class="btn btn-primary btn-sm">Ajukan Penarikan</button>
+                                    <a href="index.php" class="btn btn-danger btn-sm">Kembali</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
 </body>
 </html>
