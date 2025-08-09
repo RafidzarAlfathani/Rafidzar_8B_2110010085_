@@ -148,11 +148,15 @@ $query_items = $con->query("SELECT dp.*, pr.nama_produk, pr.satuan
             <?php endwhile; ?>
             <tr class="total">
                 <td colspan="3" class="text-end">Subtotal</td>
-                <td class="text-end">Rp <?= number_format($pesanan['total_bayar'] - $pesanan['ongkir']); ?></td>
+                <td class="text-end">Rp <?= number_format($pesanan['total_bayar'] - $pesanan['ongkir'] - $pesanan['biaya_admin']); ?></td>
             </tr>
             <tr class="total">
                 <td colspan="3" class="text-end">Ongkos Kirim</td>
                 <td class="text-end">Rp <?= number_format($pesanan['ongkir']); ?></td>
+            </tr>
+            <tr class="total">
+                <td colspan="3" class="text-end">Biaya Admin</td>
+                <td class="text-end">Rp <?= number_format($pesanan['biaya_admin']); ?></td>
             </tr>
             <tr class="total">
                 <td colspan="3" class="text-end"><strong>Grand Total</strong></td>

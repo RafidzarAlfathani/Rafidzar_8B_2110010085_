@@ -2,11 +2,13 @@
 include "../inc/koneksi.php";
 session_start();
 
+// Cek hak akses: hanya Admin atau Pimpinan
 if (!isset($_SESSION['user_level']) || !in_array($_SESSION['user_level'], ['Admin', 'Pimpinan'])) {
     echo "<script>alert('Akses ditolak!'); window.location='../index.php';</script>";
     exit;
 }
 
+// Ambil parameter ID dan tipe (petani / kurir)
 $id_pengajuan = isset($_GET['id']) ? intval($_GET['id']) : 0;
 $tipe = isset($_GET['tipe']) ? strtolower($_GET['tipe']) : '';
 
@@ -27,20 +29,27 @@ if ($tipe === 'petani') {
     exit;
 }
 
-// Lakukan update status ke "Ditolak"
+// Data verifikasi
 $tanggal_verifikasi = date("Y-m-d H:i:s");
-$verifikator = $_SESSION['user_nama'] ?? 'Admin/Pimpinan';
+$id_admin = $_SESSION['user_id']; // Simpan ID admin/pimpinan yang login
 
+// Update status menjadi "Ditolak"
 $query = mysqli_query($con, "UPDATE $tabel 
     SET status = 'Ditolak', 
         tanggal_verifikasi = '$tanggal_verifikasi', 
-        diverifikasi_oleh = '$verifikator' 
+        diverifikasi_oleh = '$id_admin'
     WHERE $id_field = '$id_pengajuan'
 ");
 
 if ($query) {
-    echo "<script>alert('Pengajuan berhasil disetujui.'); window.location.href='index.php?page=penarikan_dana&aksi=verifikasi';</script>";
+    echo "<script>
+        alert('Pengajuan berhasil ditolak.');
+        window.location.href='index.php?page=penarikan_dana&aksi=verifikasi';
+    </script>";
 } else {
-    echo "<script>alert('Terjadi kesalahan saat memproses pengajuan.');  window.location.href='index.php?page=penarikan_dana&aksi=verifikasi';</script>";
+    echo "<script>
+        alert('Terjadi kesalahan saat memproses penolakan.');
+        window.location.href='index.php?page=penarikan_dana&aksi=verifikasi';
+    </script>";
 }
 ?>

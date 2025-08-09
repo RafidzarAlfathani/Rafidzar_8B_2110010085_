@@ -18,6 +18,9 @@
                                         <th>Invoice</th>
                                         <th>Pembeli</th>
                                         <th>Tanggal Pesan</th>
+                                        <th>Total Produk</th>
+                                        <th>Ongkir</th>
+                                        <th>Biaya Admin</th>
                                         <th>Total Bayar</th>
                                         <th class="text-center">Status</th>
                                         <th class="text-center">#</th>
@@ -29,15 +32,12 @@
                                     $user_level = $_SESSION['user_level'];
                                     $user_id = $_SESSION['user_id'];
 
-                                    // 🔑 Kunci: Membangun query secara dinamis berdasarkan peran pengguna
                                     $query = "";
                                     if ($user_level == 'Admin' || $user_level == 'Pimpinan') {
-                                        // 👑 Admin melihat semua pesanan
                                         $query = "SELECT pesanan.*, pembeli.nama_pembeli
                                                   FROM pesanan
                                                   JOIN pembeli ON pesanan.id_pembeli = pembeli.id_pembeli";
                                     } elseif ($user_level == 'Petani') {
-                                        // 👨‍🌾 Petani melihat pesanan yang mengandung produknya
                                         $query = "SELECT DISTINCT pesanan.*, pembeli.nama_pembeli
                                                   FROM pesanan
                                                   JOIN pembeli ON pesanan.id_pembeli = pembeli.id_pembeli
@@ -45,7 +45,6 @@
                                                   JOIN produk ON detail_pesanan.id_produk = produk.id_produk
                                                   WHERE produk.id_petani = '$user_id'";
                                     } elseif ($user_level == 'Kurir') {
-                                        // 🚚 Kurir melihat pesanan yang ditugaskan padanya
                                         $query = "SELECT pesanan.*, pembeli.nama_pembeli
                                                   FROM pesanan
                                                   JOIN pembeli ON pesanan.id_pembeli = pembeli.id_pembeli
@@ -56,7 +55,6 @@
                                     $ambil = $con->query($query);
                                     
                                     while ($row = $ambil->fetch_assoc()) {
-                                        // Logika untuk warna badge status (tidak berubah)
                                         $status = $row['status_pesanan'];
                                         $badge_color = 'bg-secondary';
                                         if ($status == 'Menunggu Pembayaran' || $status == 'Menunggu Verifikasi') {
@@ -68,13 +66,21 @@
                                         } elseif ($status == 'Dibatalkan') {
                                             $badge_color = 'bg-danger';
                                         }
+
+                                        $total_bayar = $row['total_bayar'];
+                                        $ongkir = $row['ongkir'];
+                                        $biaya_admin = $row['biaya_admin'];
+                                        $total_produk = $total_bayar - $ongkir - $biaya_admin;
                                     ?>
                                         <tr>
                                             <td class="text-center"><?= $nomor++; ?></td>
                                             <td><?= $row['kode_invoice']; ?></td>
                                             <td><?= $row['nama_pembeli']; ?></td>
                                             <td><?= date("d M Y, H:i", strtotime($row['tgl_pesan'])); ?></td>
-                                            <td>Rp <?= number_format($row['total_bayar']); ?></td>
+                                            <td>Rp <?= number_format($total_produk); ?></td>
+                                            <td>Rp <?= number_format($ongkir); ?></td>
+                                            <td>Rp <?= number_format($biaya_admin); ?></td>
+                                            <td><strong>Rp <?= number_format($total_bayar); ?></strong></td>
                                             <td class="text-center">
                                                 <span class="badge <?= $badge_color; ?>"><?= $status; ?></span>
                                             </td>
@@ -85,7 +91,6 @@
                                                     </button>
                                                     <ul class="dropdown-menu">
                                                         <li><a class="dropdown-item" href="?page=pesanan&aksi=detail&id_pesanan=<?= $row['id_pesanan'] ?>">Lihat Detail</a></li>
-                                                        
                                                         <?php if ($user_level == 'Admin' || $user_level == 'Pimpinan'): ?>
                                                             <li><a class="dropdown-item" href="javascript:void(0)" onclick="confirmDelete(<?= $row['id_pesanan']; ?>)">Hapus</a></li>
                                                         <?php endif; ?>

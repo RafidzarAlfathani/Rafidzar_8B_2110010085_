@@ -37,9 +37,13 @@ $id_kurir = $_SESSION['user_id'];
                 <tbody>
                     <?php
                     $query = mysqli_query($con, "
-                        SELECT * FROM pengajuan_dana_kurir 
-                        WHERE id_kurir = '$id_kurir'
-                        ORDER BY tanggal_pengajuan DESC
+SELECT p.*, a.username AS nama_verifikator
+FROM pengajuan_dana_kurir p
+LEFT JOIN admin a 
+    ON p.diverifikasi_oleh = a.id_admin
+WHERE p.id_kurir = '$id_kurir'
+ORDER BY p.tanggal_pengajuan DESC
+
                     ");
 
                     if (mysqli_num_rows($query) == 0) {
@@ -68,7 +72,8 @@ $id_kurir = $_SESSION['user_id'];
                             <td><?= htmlspecialchars($row['catatan'] ?? '-') ?></td>
                             <td><?= date('d-m-Y', strtotime($row['tanggal_pengajuan'])) ?></td>
                             <td><?= $row['tanggal_verifikasi'] ? date('d-m-Y H:i', strtotime($row['tanggal_verifikasi'])) : '-'; ?></td>
-                            <td><?= $row['diverifikasi_oleh'] ?? '-'; ?></td>
+                            <td><?= $row['nama_verifikator'] ?: '-' ?></td>
+
                         </tr>
                     <?php
                         }

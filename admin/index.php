@@ -132,6 +132,7 @@ if (isset($_SESSION['user_level'])) {
                                 </li>
                             <?php endif; ?>
 
+
                             <?php if (in_array($user_level, ['Admin', 'Pimpinan', 'Petani', 'Kurir'])): ?>
                                 <li class="sidebar-dropdown-item">
                                     <a href="?page=pesanan" class="sidebar-link"><span class="nav-icon"><i class="fa-light fa-list"></i></span> <span class="sidebar-txt">Pesanan</span></a>
@@ -179,6 +180,7 @@ if (isset($_SESSION['user_level'])) {
                                         <li class="sidebar-dropdown-item"><a href="?page=laporan&aksi=laporan_pesanan" class="sidebar-link"><i class="fa-light fa-regular fa-angle-right"></i> Laporan Pesanan</a></li>
                                         <li class="sidebar-dropdown-item"><a href="?page=laporan&aksi=laporan_produk_terlaris" class="sidebar-link"><i class="fa-light fa-regular fa-angle-right"></i> Produk Terlaris</a></li>
                                         <li class="sidebar-dropdown-item"><a href="?page=laporan&aksi=laporan_pendapatan_petani" class="sidebar-link"><i class="fa-light fa-regular fa-angle-right"></i> Pendapatan Petani</a></li>
+                                        <!-- <li class="sidebar-dropdown-item"><a href="?page=laporan&aksi=laporan_pendapatan_balai" class="sidebar-link"><i class="fa-light fa-regular fa-angle-right"></i> Pendapatan Balai</a></li> -->
                                         <li class="sidebar-dropdown-item"><a href="?page=laporan&aksi=laporan_saldo_petani" class="sidebar-link"><i class="fa-light fa-regular fa-angle-right"></i> saldo Petani</a></li>
                                         <li class="sidebar-dropdown-item"><a href="?page=laporan&aksi=laporan_saldo_kurir" class="sidebar-link"><i class="fa-light fa-regular fa-angle-right"></i> saldo Kurir</a></li>
                                         <li class="sidebar-dropdown-item"><a href="?page=laporan&aksi=laporan_kinerja_kurir" class="sidebar-link"><i class="fa-light fa-regular fa-angle-right"></i> Kinerja Kurir</a></li>
@@ -400,6 +402,9 @@ if (isset($_SESSION['user_level'])) {
                 if ($aksi == "laporan_pendapatan_petani") {
                     include "page/laporan/laporan_pendapatan_petani.php";
                 }
+                // if ($aksi == "laporan_pendapatan_balai") {
+                //     include "page/laporan/laporan_pendapatan_balai.php";
+                // }
                 if ($aksi == "laporan_kinerja_kurir") {
                     include "page/laporan/laporan_kinerja_kurir.php";
                 }

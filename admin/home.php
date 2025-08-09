@@ -17,7 +17,17 @@ if ($user_level == 'Admin' || $user_level == 'Pimpinan') :
     $pesanan_aktif = $con->query("SELECT COUNT(*) as total FROM pesanan WHERE status_pesanan IN ('Menunggu Verifikasi', 'Diproses', 'Dikirim')")->fetch_assoc()['total'];
     
     $hari_ini = date('Y-m-d');
-    $pendapatan_hari_ini = $con->query("SELECT SUM(total_bayar) as total FROM pesanan WHERE DATE(tgl_bayar) = '$hari_ini' AND status_pesanan NOT IN ('Dibatalkan', 'Menunggu Pembayaran')")->fetch_assoc()['total'] ?? 0;
+   $pendapatan_hari_ini = $con->query("SELECT SUM(biaya_admin) as total 
+    FROM pesanan 
+    WHERE DATE(tgl_bayar) = '$hari_ini' 
+      AND status_pesanan = 'Selesai' 
+      AND biaya_admin > 0")->fetch_assoc()['total'] ?? 0;
+
+    $total_keuntungan_balai = $con->query("SELECT SUM(biaya_admin) as total 
+    FROM pesanan 
+    WHERE status_pesanan = 'Selesai' 
+      AND biaya_admin > 0")->fetch_assoc()['total'] ?? 0;
+
 
     // 2. Logika untuk Grafik & Laporan Produk
     $bulan_terpilih = isset($_GET['bulan']) ? (int)$_GET['bulan'] : date('m');
@@ -53,7 +63,8 @@ if ($user_level == 'Admin' || $user_level == 'Pimpinan') :
         <div class="col-lg col-md-6 col-sm-6"><div class="card card-stats"><div class="card-body"><div class="row"><div class="col-5"><div class="icon-big text-center"><i class="fa fa-users text-success"></i></div></div><div class="col-7 d-flex align-items-center"><div class="numbers"><p class="card-category">Total Petani</p><h4 class="card-title"><?= number_format($total_petani); ?></h4></div></div></div></div></div></div>
         <div class="col-lg col-md-6 col-sm-6"><div class="card card-stats"><div class="card-body"><div class="row"><div class="col-5"><div class="icon-big text-center"><i class="fa fa-user-friends text-info"></i></div></div><div class="col-7 d-flex align-items-center"><div class="numbers"><p class="card-category">Total Pembeli</p><h4 class="card-title"><?= number_format($total_pembeli); ?></h4></div></div></div></div></div></div>
         <div class="col-lg col-md-6 col-sm-6"><div class="card card-stats"><div class="card-body"><div class="row"><div class="col-5"><div class="icon-big text-center"><i class="fa fa-shopping-cart text-danger"></i></div></div><div class="col-7 d-flex align-items-center"><div class="numbers"><p class="card-category">Pesanan Aktif</p><h4 class="card-title"><?= number_format($pesanan_aktif); ?></h4></div></div></div></div></div></div>
-        <div class="col-lg col-md-6 col-sm-6"><div class="card card-stats"><div class="card-body"><div class="row"><div class="col-5"><div class="icon-big text-center"><i class="fa fa-money-bill-wave text-success"></i></div></div><div class="col-7 d-flex align-items-center"><div class="numbers"><p class="card-category">Pendapatan Hari Ini</p><h4 class="card-title">Rp <?= number_format($pendapatan_hari_ini); ?></h4></div></div></div></div></div></div>
+        <div class="col-lg col-md-6 col-sm-6"><div class="card card-stats"><div class="card-body"><div class="row"><div class="col-5"><div class="icon-big text-center"><i class="fa fa-money-bill-wave text-success"></i></div></div><div class="col-7 d-flex align-items-center"><div class="numbers"><p class="card-category">Keuntungan Hari Ini</p><h4 class="card-title">Rp <?= number_format($pendapatan_hari_ini); ?></h4></div></div></div></div></div></div>
+        <div class="col-lg col-md-6 col-sm-6"><div class="card card-stats"><div class="card-body"><div class="row"><div class="col-5"><div class="icon-big text-center"><i class="fa fa-money-bill-wave text-success"></i></div></div><div class="col-7 d-flex align-items-center"><div class="numbers"><p class="card-category">Total Keuntungan</p><h4 class="card-title">Rp <?= number_format($total_keuntungan_balai); ?></h4></div></div></div></div></div></div>
     </div>
 
     <div class="row">
