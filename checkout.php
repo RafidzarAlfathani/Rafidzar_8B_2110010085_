@@ -191,11 +191,12 @@ if (isset($_POST['buat_pesanan'])) {
                                         while ($item_checkout = $query_items_checkout->fetch_assoc()) {
                                             $jumlah_checkout = $_SESSION['keranjang'][$item_checkout['id_produk']];
                                             $item_total = $item_checkout['harga'] * $jumlah_checkout;
+                                            $item_harga = $item_checkout['harga'];
                                             $subtotal_checkout += $item_total;
                                     ?>
-                                            <tr>
+                                            <tr> 
                                                 <td> <?= $item_checkout['nama_produk'] ?> <strong> × <?= $jumlah_checkout ?></strong></td>
-                                                <td> Rp <?= number_format($item_total) ?></td>
+                                                <td> Rp <?= number_format($item_harga ) ?></td>
                                             </tr>
                                     <?php
                                         }

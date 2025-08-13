@@ -18,11 +18,13 @@ $q_pendapatan = mysqli_query($con, "
     FROM detail_pesanan dp
     JOIN produk p ON dp.id_produk = p.id_produk
     JOIN pesanan ps ON dp.id_pesanan = ps.id_pesanan
-    WHERE p.id_petani = '$id_petani' AND ps.status_pesanan = 'Selesai'
+    WHERE p.id_petani = '$id_petani' 
+    AND ps.status_pesanan = 'Selesai'
+    AND ps.bukti_sampai IS NOT NULL
 ");
 $pendapatan = mysqli_fetch_assoc($q_pendapatan)['total_pendapatan'] ?? 0;
 
-// Hitung total dana yang sudah ditarik
+// Hitung total dana yang sudah ditarik (status Disetujui)
 $q_ditarik = mysqli_query($con, "
     SELECT SUM(jumlah_dana) AS total_ditarik
     FROM pengajuan_dana_petani
@@ -34,32 +36,36 @@ $ditarik = mysqli_fetch_assoc($q_ditarik)['total_ditarik'] ?? 0;
 $sisa_saldo = $pendapatan - $ditarik;
 if ($sisa_saldo < 0) $sisa_saldo = 0;
 
-// Proses form
+// Proses form pengajuan
 if (isset($_POST['submit'])) {
     $jumlah_dana = (int) $_POST['jumlah_dana'];
     $metode = mysqli_real_escape_string($con, $_POST['metode']);
     $catatan = mysqli_real_escape_string($con, $_POST['catatan']);
-    $tanggal_pengajuan = date("Y-m-d");
+    $tanggal_pengajuan = date("Y-m-d H:i:s");
 
     if ($jumlah_dana <= 0) {
-        echo "<script>alert('Jumlah dana tidak valid!');</script>";
+        echo "<script>
+            Swal.fire({ icon: 'error', title: 'Gagal!', text: 'Jumlah dana tidak valid!' });
+        </script>";
     } elseif ($jumlah_dana > $sisa_saldo) {
-        echo "<script>alert('Jumlah dana melebihi sisa saldo!');</script>";
+        echo "<script>
+            Swal.fire({ icon: 'error', title: 'Gagal!', text: 'Jumlah dana melebihi sisa saldo yang tersedia!' });
+        </script>";
     } else {
-        $query = mysqli_query($con, "INSERT INTO pengajuan_dana_petani 
-            (id_petani, jumlah_dana, metode, catatan, status, tanggal_pengajuan) 
-            VALUES 
+        $query = mysqli_query($con, "INSERT INTO pengajuan_dana_petani
+            (id_petani, jumlah_dana, metode, catatan, status, tanggal_pengajuan)
+            VALUES
             ('$id_petani', '$jumlah_dana', '$metode', '$catatan', 'Menunggu', '$tanggal_pengajuan')
         ");
 
         if ($query) {
             echo "<script>
-                Swal.fire({ icon: 'success', title: 'Berhasil!', text: 'Pengajuan berhasil diajukan.' })
-                .then(() => { window.location='?page=penarikan_dana'; });
+                Swal.fire({ icon: 'success', title: 'Berhasil!', text: 'Pengajuan berhasil diajukan. Menunggu verifikasi admin.' })
+                .then(() => { window.location='index.php'; });
             </script>";
         } else {
             echo "<script>
-                Swal.fire({ icon: 'error', title: 'Gagal!', text: 'Terjadi kesalahan saat menyimpan pengajuan.' });
+                Swal.fire({ icon: 'error', title: 'Gagal!', text: 'Terjadi kesalahan saat menyimpan pengajuan: " . mysqli_error($con) . "' });
             </script>";
         }
     }
@@ -87,7 +93,8 @@ if (isset($_POST['submit'])) {
                             <div class="row mb-2">
                                 <label class="col-sm-3 col-form-label">Sisa Saldo (Rp)</label>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control" value="<?= number_format($sisa_saldo, 0, ',', '.') ?>" readonly>
+                                    <input type="text" class="form-control" id="sisa_saldo_display" value="<?= number_format($sisa_saldo, 0, ',', '.') ?>" readonly>
+                                    <input type="hidden" id="sisa_saldo_value" value="<?= $sisa_saldo ?>">
                                 </div>
                             </div>
 
@@ -99,9 +106,10 @@ if (isset($_POST['submit'])) {
                             </div>
 
                             <div class="row mb-2">
-                                <label class="col-sm-3 col-form-label">Jumlah Dana Ditarik(Rp)</label>
+                                <label class="col-sm-3 col-form-label">Jumlah Dana Ditarik (Rp)</label>
                                 <div class="col-sm-9">
-                                    <input type="number" class="form-control" name="jumlah_dana" required>
+                                    <input type="number" class="form-control" name="jumlah_dana" id="jumlah_dana_input" required min="1" max="<?= $sisa_saldo ?>">
+                                    <small id="saldo_warning" class="text-danger" style="display:none;">Jumlah pengajuan melebihi sisa saldo!</small>
                                 </div>
                             </div>
 
@@ -111,7 +119,6 @@ if (isset($_POST['submit'])) {
                                     <select name="metode" class="form-control" required>
                                         <option value="">-- Pilih Metode --</option>
                                         <option value="Cash di Balai">Cash di Balai</option>
-                                        <!-- <option value="Transfer">Transfer</option> -->
                                     </select>
                                 </div>
                             </div>
@@ -126,7 +133,7 @@ if (isset($_POST['submit'])) {
                             <div class="row mb-2">
                                 <label class="col-sm-3 col-form-label">&nbsp;</label>
                                 <div class="col-sm-9">
-                                    <button type="submit" name="submit" class="btn btn-primary btn-sm">Ajukan Penarikan</button>
+                                    <button type="submit" name="submit" class="btn btn-primary btn-sm" id="btn_submit_pengajuan">Ajukan Penarikan</button>
                                     <a href="index.php" class="btn btn-danger btn-sm">Kembali</a>
                                 </div>
                             </div>
@@ -137,3 +144,37 @@ if (isset($_POST['submit'])) {
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const jumlahDanaInput = document.getElementById('jumlah_dana_input');
+    const sisaSaldoValue = parseFloat(document.getElementById('sisa_saldo_value').value);
+    const saldoWarning = document.getElementById('saldo_warning');
+    const btnSubmit = document.getElementById('btn_submit_pengajuan');
+
+    jumlahDanaInput.addEventListener('input', function() {
+        const jumlahPengajuan = parseFloat(this.value);
+
+        if (isNaN(jumlahPengajuan) || jumlahPengajuan <= 0) {
+            saldoWarning.style.display = 'none';
+            btnSubmit.disabled = true;
+        } else if (jumlahPengajuan > sisaSaldoValue) {
+            saldoWarning.style.display = 'block';
+            btnSubmit.disabled = true;
+        } else {
+            saldoWarning.style.display = 'none';
+            btnSubmit.disabled = false;
+        }
+    });
+
+    // Initial check on page load
+    if (sisaSaldoValue <= 0) {
+        jumlahDanaInput.setAttribute('max', 0);
+        jumlahDanaInput.setAttribute('placeholder', 'Saldo tidak mencukupi');
+        jumlahDanaInput.readOnly = true;
+        btnSubmit.disabled = true;
+    } else {
+        jumlahDanaInput.setAttribute('max', sisaSaldoValue);
+    }
+});
+</script>

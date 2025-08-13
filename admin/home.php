@@ -281,12 +281,6 @@ if ($q_total_tarik) {
 $sisa_saldo = $total_pendapatan - $total_tarik;
 if ($sisa_saldo < 0) $sisa_saldo = 0;
 
-// Debug (opsional, hapus di produksi)
-echo "<pre>";
-echo "Total Pendapatan: Rp " . number_format($total_pendapatan, 0, ',', '.') . "\n";
-echo "Total Penarikan Disetujui: Rp " . number_format($total_tarik, 0, ',', '.') . "\n";
-echo "Sisa Saldo: Rp " . number_format($sisa_saldo, 0, ',', '.') . "\n";
-echo "</pre>";
 
 ?>
 

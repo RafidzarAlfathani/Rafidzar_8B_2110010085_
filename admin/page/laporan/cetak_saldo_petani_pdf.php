@@ -41,7 +41,7 @@ $ambil_data = $con->query($sql_data);
 
 <html>
 <head>
-    <title>Cetak Laporan Sisa Saldo Petani</title>
+    <title>Cetak Laporan Saldo Petani</title>
     <style>
         body { font-family: Arial, sans-serif; }
         .header-table { width: 100%; border-bottom: 3px double #000; padding-bottom: 10px; }
@@ -71,7 +71,7 @@ $ambil_data = $con->query($sql_data);
         </tr>
     </table>
 
-    <div class="report-title">Laporan Sisa Saldo Petani</div>
+    <div class="report-title">Laporan Saldo Petani</div>
     <br>
 
     <table class="data-table">
