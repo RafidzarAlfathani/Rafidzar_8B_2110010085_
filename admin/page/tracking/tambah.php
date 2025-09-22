@@ -30,7 +30,7 @@ if ($user_level == 'Petani') {
                                         $query_pesanan = "SELECT ps.id_pesanan, ps.kode_invoice, pm.nama_pembeli
                                                         FROM pesanan ps JOIN pembeli pm ON ps.id_pembeli = pm.id_pembeli
                                                         WHERE ps.status_pesanan = 'Dikirim'";
-                                        
+
                                         // 🚚 Jika yang login adalah Kurir, filter berdasarkan ID kurir
                                         if ($user_level == 'Kurir') {
                                             $query_pesanan .= " AND ps.id_kurir = '$user_id'";
@@ -39,14 +39,14 @@ if ($user_level == 'Petani') {
                                         $query_pesanan .= " ORDER BY ps.tgl_pesan DESC";
                                         $pesanan_dikirim = $con->query($query_pesanan);
 
-                                        while($p = $pesanan_dikirim->fetch_assoc()){
+                                        while ($p = $pesanan_dikirim->fetch_assoc()) {
                                             echo "<option value='$p[id_pesanan]'>$p[kode_invoice] - a/n $p[nama_pembeli]</option>";
                                         }
                                         ?>
                                     </select>
                                 </div>
                             </div>
-                            
+
                             <div class="row mb-3">
                                 <label class="col-sm-3 col-form-label">Keterangan</label>
                                 <div class="col-sm-9">
@@ -60,12 +60,29 @@ if ($user_level == 'Petani') {
                                 </div>
                             </div>
                             <div class="row mb-3">
+                                <label class="col-sm-3 col-form-label">Estimasi Waktu Tiba</label>
+                                <div class="col-sm-9">
+                                    <select name="estimasi_tiba" class="form-control" required>
+                                        <option value="">-- Pilih Estimasi Waktu --</option>
+                                        <option value="00:05:00">5 Menit</option>
+                                        <option value="00:15:00">15 Menit</option>
+                                        <option value="00:25:00">25 Menit</option>
+                                        <option value="00:40:00">40 Menit</option>
+                                        <option value="01:00:00">1 Jam</option>
+                                        <option value="01:30:00">1 Jam 30 Menit</option>
+                                    </select>
+                                    <small class="form-text text-muted">Pilih estimasi waktu tiba sejak titik lacak ini dicatat.</small>
+                                </div>
+                            </div>
+
+
+                            <div class="row mb-3">
                                 <label class="col-sm-3 col-form-label">Latitude</label>
                                 <div class="col-sm-9">
                                     <input type="text" class="form-control" name="latitude" id="latitude" placeholder="Akan terisi otomatis dari peta" required readonly>
                                 </div>
                             </div>
-                             <div class="row mb-2">
+                            <div class="row mb-2">
                                 <label class="col-sm-3 col-form-label">Longitude</label>
                                 <div class="col-sm-9">
                                     <input type="text" class="form-control" name="longitude" id="longitude" placeholder="Akan terisi otomatis dari peta" required readonly>
@@ -86,9 +103,11 @@ if ($user_level == 'Petani') {
                             $keterangan = mysqli_real_escape_string($con, $_POST['keterangan']);
                             $latitude = mysqli_real_escape_string($con, $_POST['latitude']);
                             $longitude = mysqli_real_escape_string($con, $_POST['longitude']);
+                            $estimasi_tiba = $_POST['estimasi_tiba']; // format HH:MM:SS
 
-                            $query = "INSERT INTO tracking_pengiriman (id_pesanan, keterangan, latitude, longitude)
-                                      VALUES ('$id_pesanan', '$keterangan', '$latitude', '$longitude')";
+                            $query = "INSERT INTO tracking_pengiriman (id_pesanan, keterangan, latitude, longitude, estimasi_tiba)
+              VALUES ('$id_pesanan', '$keterangan', '$latitude', '$longitude', '$estimasi_tiba')";
+
 
                             if ($con->query($query) === TRUE) {
                                 echo "<script>
@@ -115,7 +134,9 @@ if ($user_level == 'Petani') {
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
-    var marker = L.marker([initialLat, initialLng], { draggable: true }).addTo(map);
+    var marker = L.marker([initialLat, initialLng], {
+        draggable: true
+    }).addTo(map);
     var latInput = document.getElementById('latitude');
     var lngInput = document.getElementById('longitude');
     latInput.value = initialLat;

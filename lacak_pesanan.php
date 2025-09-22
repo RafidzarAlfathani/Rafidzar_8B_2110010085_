@@ -42,6 +42,11 @@ if ($query_tracking->num_rows > 0) {
         $tracking_points[] = $row;
     }
 }
+$estimasi_terbaru = "";
+if (!empty($tracking_points)) {
+    $last_point = end($tracking_points);
+    $estimasi_terbaru = $last_point['estimasi_tiba'];
+}
 
 ?>
 
@@ -65,7 +70,12 @@ if ($query_tracking->num_rows > 0) {
     <div class="checkout_page_bg">
         <div class="container">
             <h4 class="mb-3">Status Pengiriman untuk Invoice: <?= $pesanan['kode_invoice']; ?></h4>
-            
+            <?php if (!empty($estimasi_terbaru)): ?>
+    <div class="alert alert-success">
+        <strong>Estimasi Tiba:</strong> <?= htmlspecialchars($estimasi_terbaru); ?>
+    </div>
+<?php endif; ?>
+
             <?php if (empty($tracking_points)): ?>
                 <div class="alert alert-info text-center">Belum ada informasi pelacakan untuk pesanan ini.</div>
             <?php else: ?>
@@ -73,6 +83,7 @@ if ($query_tracking->num_rows > 0) {
                     <div class="col-lg-7 col-md-12">
                         <div id="map" style="height: 500px; width: 100%; border: 1px solid #ddd; border-radius: 8px;"></div>
                     </div>
+                    
                     <div class="col-lg-5 col-md-12">
                         <h5>Riwayat Perjalanan</h5>
                         <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
