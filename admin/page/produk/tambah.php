@@ -83,22 +83,20 @@
                             </div>
 
                             <div class="row mb-2">
-                                <label class="col-sm-3 col-form-label">Status Produk</label>
+                                <label class="col-sm-3 col-form-label">Tanggal Panen</label>
                                 <div class="col-sm-9">
-                                    <?php if ($_SESSION['user_level'] == 'Admin' || $_SESSION['user_level'] == 'Pimpinan'): ?>
-                                        <select name="status_produk" class="form-control">
-                                            <option value="Menunggu Verifikasi">Menunggu Verifikasi</option>
-                                            <option value="Tersedia">Tersedia</option>
-                                            <option value="Habis">Habis</option>
-                                        </select>
-                                    <?php else: ?>
-                                        <input type="text" class="form-control" name="status_produk" value="Tersedia" readonly>
-                                    <?php endif; ?>
+                                    <input type="date" class="form-control" name="tanggal_panen">
                                 </div>
                             </div>
-
                             <div class="row mb-2">
-                                <label class="col-sm-3 col-form-label">Foto Produk</label>
+                                <label class="col-sm-3 col-form-label">Foto Saat Panen</label>
+                                <div class="col-sm-9">
+                                    <input type="file" class="form-control" name="foto_panen">
+                                    <small class="form-text text-muted">Opsional. Foto ini akan menunjukkan kesegaran produk Anda.</small>
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <label class="col-sm-3 col-form-label">Foto Produk Utama</label>
                                 <div class="col-sm-9">
                                     <input type="file" class="form-control" name="foto_produk" required>
                                 </div>
@@ -113,9 +111,7 @@
 
                         </form>
                         <?php
-                        // Logika PHP untuk insert tidak perlu diubah, karena form sudah mengirimkan data yang benar
                         if (isset($_POST['tambah'])) {
-                            // ... (kode PHP Anda untuk INSERT) ...
                             $id_petani = $_POST['id_petani'];
                             $id_kategori = $_POST['id_kategori'];
                             $nama_produk = mysqli_real_escape_string($con, $_POST['nama_produk']);
@@ -124,15 +120,33 @@
                             $satuan = mysqli_real_escape_string($con, $_POST['satuan']);
                             $stok = $_POST['stok'];
                             $minimum_pembelian = $_POST['minimum_pembelian'];
-                            $status_produk = $_POST['status_produk'];
+                            
+                            // Ambil data baru
+                            $tanggal_panen = $_POST['tanggal_panen'];
+                            $foto_panen = $_FILES['foto_panen']['name'];
+                            
+                            // Status produk default untuk Petani
+                            $status_produk = ($_SESSION['user_level'] == 'Petani') ? 'Tersedia' : 'Menunggu Verifikasi';
+
+                            // Upload Foto Produk Utama
                             $foto_produk = $_FILES['foto_produk']['name'];
-
                             $foto_tmp = $_FILES['foto_produk']['tmp_name'];
-                            $foto_dir = "images/produk/" . $foto_produk;
-                            move_uploaded_file($foto_tmp, $foto_dir);
+                            move_uploaded_file($foto_tmp, "images/produk/" . $foto_produk);
+                            
+                            // Upload Foto Panen (jika ada)
+                            if (!empty($foto_panen)) {
+                                $foto_panen_tmp = $_FILES['foto_panen']['tmp_name'];
+                                move_uploaded_file($foto_panen_tmp, "images/panen/" . $foto_panen);
+                            } else {
+                                $foto_panen = NULL; // Set NULL jika tidak diupload
+                            }
+                            
+                            // Jika tanggal panen tidak diisi, set NULL
+                            $tanggal_panen_sql = !empty($tanggal_panen) ? "'$tanggal_panen'" : "NULL";
+                            $foto_panen_sql = !empty($foto_panen) ? "'$foto_panen'" : "NULL";
 
-                            $query = "INSERT INTO produk (id_petani, id_kategori, nama_produk, deskripsi, harga, satuan, stok, status_produk, foto_produk, minimum_pembelian)
-                                       VALUES ('$id_petani', '$id_kategori', '$nama_produk', '$deskripsi', '$harga', '$satuan', '$stok', '$status_produk', '$foto_produk', '$minimum_pembelian')";
+                            $query = "INSERT INTO produk (id_petani, id_kategori, nama_produk, deskripsi, harga, satuan, stok, status_produk, foto_produk, minimum_pembelian, tanggal_panen, foto_panen)
+                                       VALUES ('$id_petani', '$id_kategori', '$nama_produk', '$deskripsi', '$harga', '$satuan', '$stok', '$status_produk', '$foto_produk', '$minimum_pembelian', $tanggal_panen_sql, $foto_panen_sql)";
 
                             if ($con->query($query) === TRUE) {
                                 echo "<script>
@@ -140,7 +154,8 @@
                                          .then((result) => { if (result.isConfirmed) { window.location.href = '?page=produk'; } });
                                        </script>";
                             } else {
-                                echo "<script> Swal.fire({ icon: 'error', title: 'Gagal!', text: 'Terjadi kesalahan.' }); </script>";
+                                // Tampilkan error SQL untuk debugging
+                                echo "<script> Swal.fire({ icon: 'error', title: 'Gagal!', text: 'Terjadi kesalahan: " . $con->error . "' }); </script>";
                             }
                         }
                         ?>

@@ -1,6 +1,6 @@
 <?php
 // 1. Inisialisasi mPDF
-$nama_dokumen = 'Laporan Produk Terlaris';
+$nama_dokumen = 'Laporan Produk Kurang Laris';
 require_once __DIR__ . '/../../../vendor/autoload.php';
 use Mpdf\Mpdf;
 $mpdf = new Mpdf(['format' => 'A4']);
@@ -17,24 +17,42 @@ $tgl_selesai_filter = isset($_POST['tanggal_selesai']) && !empty($_POST['tanggal
 $kategori_filter = isset($_POST['id_kategori']) ? (int) $_POST['id_kategori'] : '';
 $limit_filter = isset($_POST['limit']) ? (int) $_POST['limit'] : 10;
 
-// Replikasi query
-$sql_data = "SELECT pr.nama_produk, pt.nama_petani, kp.nama_kategori, SUM(dp.jumlah) AS total_terjual FROM detail_pesanan dp JOIN produk pr ON dp.id_produk = pr.id_produk JOIN petani pt ON pr.id_petani = pt.id_petani JOIN kategori_produk kp ON pr.id_kategori = kp.id_kategori JOIN pesanan ps ON dp.id_pesanan = ps.id_pesanan WHERE ps.status_pesanan != 'Dibatalkan'";
+// KUNCI PERUBAHAN: Query menggunakan LEFT JOIN untuk menyertakan produk yang belum pernah terjual
+// dan diurutkan secara menaik (ASC)
+$sql_data = "SELECT 
+                pr.nama_produk,
+                pt.nama_petani,
+                kp.nama_kategori,
+                COALESCE(SUM(dp.jumlah), 0) AS total_terjual
+             FROM produk pr
+             LEFT JOIN detail_pesanan dp ON pr.id_produk = dp.id_produk
+             LEFT JOIN pesanan ps ON dp.id_pesanan = ps.id_pesanan AND ps.status_pesanan != 'Dibatalkan'
+             JOIN petani pt ON pr.id_petani = pt.id_petani
+             JOIN kategori_produk kp ON pr.id_kategori = kp.id_kategori";
+
+$where_clauses = [];
 if ($tgl_mulai_filter && $tgl_selesai_filter) {
-    $sql_data .= " AND ps.tgl_pesan BETWEEN '$tgl_mulai_filter 00:00:00' AND '$tgl_selesai_filter 23:59:59'";
+    $where_clauses[] = "ps.tgl_pesan BETWEEN '$tgl_mulai_filter 00:00:00' AND '$tgl_selesai_filter 23:59:59'";
 }
 if ($kategori_filter) {
-    $sql_data .= " AND pr.id_kategori = $kategori_filter";
+    $where_clauses[] = "pr.id_kategori = $kategori_filter";
 }
-$sql_data .= " GROUP BY pr.id_produk ORDER BY total_terjual DESC LIMIT $limit_filter";
-$ambil_data = $con->query($sql_data);
+if (!empty($where_clauses)) {
+    $sql_data .= " WHERE " . implode(' AND ', $where_clauses);
+}
 
+$sql_data .= " GROUP BY pr.id_produk
+               ORDER BY total_terjual ASC
+               LIMIT $limit_filter";
+
+$ambil_data = $con->query($sql_data);
 $info_periode = ($tgl_mulai_filter && $tgl_selesai_filter) ? "Periode: " . tgl_indo($tgl_mulai_filter) . " s/d " . tgl_indo($tgl_selesai_filter) : "Periode: Semua Waktu";
 ?>
 
 <html>
 
 <head>
-    <title>Cetak Laporan Produk Terlaris</title>
+    <title>Cetak Laporan Produk Kurang Laris</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -118,7 +136,7 @@ $info_periode = ($tgl_mulai_filter && $tgl_selesai_filter) ? "Periode: " . tgl_i
         </tr>
     </table>
 
-    <div class="report-title">Laporan Produk Terlaris</div>
+    <div class="report-title">Laporan Produk Kurang Laris</div>
     <div class="filter-info"><?= $info_periode; ?></div>
 
     <table class="data-table">

@@ -9,13 +9,13 @@ include 'admin/inc/koneksi.php';
 
 // 1. Validasi dan ambil ID produk dari URL
 if (!isset($_GET['id']) || empty($_GET['id'])) {
-    // Jika tidak ada ID, kembali ke halaman utama
     header("Location: index.php");
     exit();
 }
 $id_produk = (int)$_GET['id'];
 
 // 2. Query untuk mengambil data produk spesifik, digabung dengan data petani dan kategori
+// Query tidak perlu diubah karena p.* sudah mencakup kolom baru (tanggal_panen dan foto_panen)
 $query_produk = $con->query("SELECT
                                 p.*,
                                 k.nama_kategori,
@@ -25,23 +25,19 @@ $query_produk = $con->query("SELECT
                             JOIN petani pt ON p.id_petani = pt.id_petani
                             WHERE p.id_produk = '$id_produk' AND p.status_produk = 'Tersedia'");
 
-// Jika produk dengan ID tersebut tidak ditemukan atau tidak tersedia
 if ($query_produk->num_rows == 0) {
     echo "<script>alert('Produk tidak ditemukan atau tidak tersedia.'); window.location.href='index.php';</script>";
     exit();
 }
 $produk = $query_produk->fetch_assoc();
 
-
-// 3. Atur judul halaman secara dinamis berdasarkan nama produk
+// 3. Atur judul halaman
 $page_title = htmlspecialchars($produk['nama_produk']);
-
 
 // 4. Panggil file header.php
 include 'header.php';
 
-
-// 5. Query untuk mengambil produk terkait (dari kategori yang sama)
+// 5. Query produk terkait
 $id_kategori_terkait = $produk['id_kategori'];
 $query_terkait = $con->query("SELECT * FROM produk
                               WHERE id_kategori = '$id_kategori_terkait'
@@ -66,6 +62,7 @@ $query_terkait = $con->query("SELECT * FROM produk
         </div>
     </div>
 </div>
+
 <div class="product_details mt-60 mb-60">
     <div class="container">
         <div class="row">
@@ -101,15 +98,25 @@ $query_terkait = $con->query("SELECT * FROM produk
                                 </li>
                                 <li><b>Kategori:</b> <a href="index.php?kategori=<?= $produk['id_kategori']; ?>"><?= $produk['nama_kategori']; ?></a></li>
                                 <li><b>Petani:</b> <?= $produk['nama_petani']; ?></li>
-                                <div class="product_desc">
-                                    <p><?= substr(strip_tags($produk['deskripsi']), 0, 250); ?>...</p>
-                                    <p><strong>Minimum Pembelian:</strong> <?= $produk['minimum_pembelian']; ?> <?= $produk['satuan']; ?></p>
-                                </div>
+                                
+                                <?php if (!empty($produk['tanggal_panen'])): ?>
+                                <li><b>Tanggal Panen:</b> <?= date('d F Y', strtotime($produk['tanggal_panen'])); ?></li>
+                                <?php endif; ?>
+                                <li><b>Minimum Pembelian:</b> <?= $produk['minimum_pembelian']; ?> <?= $produk['satuan']; ?></li>
                             </ul>
                         </div>
 
+                        <?php if (!empty($produk['foto_panen'])): ?>
+                        <div class="product_freshness_proof" style="margin-top: 20px;">
+                            <h5 style="font-size: 16px; font-weight: 600; margin-bottom: 10px;">Bukti Kesegaran</h5>
+                            <a href="admin/images/panen/<?= $produk['foto_panen']; ?>" target="_blank" title="Lihat Foto Panen Ukuran Penuh">
+                                <img src="admin/images/panen/<?= $produk['foto_panen']; ?>" alt="Foto Panen" style="max-width: 150px; border-radius: 8px; border: 1px solid #ddd;">
+                            </a>
+                            <p style="font-size: 13px; color: #666; margin-top: 8px;">Foto asli saat produk dipanen untuk menjamin kualitas.</p>
+                        </div>
+                        <?php endif; ?>
                         <?php if ($produk['stok'] > 0): ?>
-                            <div class="product_variant quantity">
+                            <div class="product_variant quantity" style="margin-top: 25px;">
                                 <label>Jumlah</label>
                                 <input min="<?= $produk['minimum_pembelian']; ?>"
                                     max="<?= $produk['stok']; ?>"
@@ -120,7 +127,7 @@ $query_terkait = $con->query("SELECT * FROM produk
                                 <button class="button" type="submit">Tambah ke Keranjang</button>
                             </div>
                         <?php else: ?>
-                            <div class="product_variant quantity">
+                            <div class="product_variant quantity" style="margin-top: 25px;">
                                 <button class="button" type="button" disabled>Stok Habis</button>
                             </div>
                         <?php endif; ?>
@@ -131,6 +138,7 @@ $query_terkait = $con->query("SELECT * FROM produk
         </div>
     </div>
 </div>
+
 <div class="product_d_info mb-60">
     <div class="container">
         <div class="row">
@@ -155,6 +163,7 @@ $query_terkait = $con->query("SELECT * FROM produk
         </div>
     </div>
 </div>
+
 <?php if ($query_terkait->num_rows > 0) : ?>
     <section class="related_product_area mb-50">
         <div class="container">
@@ -191,6 +200,7 @@ $query_terkait = $con->query("SELECT * FROM produk
         </div>
     </section>
 <?php endif; ?>
+
 <?php
 // Panggil file footer.php
 include 'footer.php';

@@ -207,19 +207,37 @@ if (!$has_access) {
                                             <option value="Dibatalkan" <?= $pesanan['status_pesanan'] == 'Dibatalkan' ? 'selected' : '' ?>>Dibatalkan</option>
                                         </select>
                                     </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Tugaskan Kurir</label>
-                                        <select name="id_kurir" class="form-control">
-                                            <option value="">-- Tidak Ada Kurir / Lepas Tugas --</option>
-                                            <?php
-                                            $kurir = $con->query("SELECT * FROM kurir WHERE status != 'Tidak Aktif' ORDER BY nama_kurir ASC");
-                                            while ($kr = $kurir->fetch_assoc()) {
-                                                $selected = ($kr['id_kurir'] == $pesanan['id_kurir']) ? 'selected' : '';
-                                                echo "<option value='$kr[id_kurir]' $selected>$kr[nama_kurir]</option>";
-                                            }
-                                            ?>
-                                        </select>
-                                    </div>
+                                    <?php
+                                    // Ambil metode pengiriman pesanan
+                                    $id_metode_pengiriman = $pesanan['id_metode_pengiriman'] ?? null;
+                                    $nama_metode = '';
+                                    if ($id_metode_pengiriman) {
+                                        $get_metode = $con->query("SELECT nama_metode FROM metode_pengiriman WHERE id_metode = '$id_metode_pengiriman'");
+                                        $nama_metode = $get_metode->fetch_assoc()['nama_metode'] ?? '';
+                                    }
+                                    ?>
+                                    <?php if ($nama_metode == 'Ambil di Koperasi Tani'): ?>
+                                        <div class="alert alert-info text-center">
+                                            <strong>Metode Pengiriman:</strong> <?= htmlspecialchars($nama_metode); ?><br>
+                                            Pesanan ini akan diambil langsung di koperasi. <br>
+                                            <b>Admin tidak perlu menugaskan kurir.</b>
+                                        </div>
+                                        <input type="hidden" name="id_kurir" value="">
+                                    <?php else: ?>
+                                        <div class="mb-3">
+                                            <label class="form-label">Tugaskan Kurir</label>
+                                            <select name="id_kurir" class="form-control">
+                                                <option value="">-- Tidak Ada Kurir / Lepas Tugas --</option>
+                                                <?php
+                                                $kurir = $con->query("SELECT * FROM kurir WHERE status != 'Tidak Aktif' ORDER BY nama_kurir ASC");
+                                                while ($kr = $kurir->fetch_assoc()) {
+                                                    $selected = ($kr['id_kurir'] == $pesanan['id_kurir']) ? 'selected' : '';
+                                                    echo "<option value='{$kr['id_kurir']}' $selected>{$kr['nama_kurir']}</option>";
+                                                }
+                                                ?>
+                                            </select>
+                                        </div>
+                                    <?php endif; ?>
                                     <button type="submit" name="update_pesanan" class="btn btn-success w-100">Update Pesanan</button>
 
                                 <?php elseif ($user_level == 'Kurir' && in_array($pesanan['status_pesanan'], ['Diproses', 'Dikirim'])): ?>

@@ -16,39 +16,26 @@
                                 <tr>
                                     <th class="text-center">No.</th>
                                     <th>Produk</th>
-                                    <?php
-                                    // 🔑 Kunci: Hanya tampilkan kolom 'Petani' jika yang login bukan Petani
-                                    if ($_SESSION['user_level'] != 'Petani') {
-                                        echo "<th>Petani</th>";
-                                    }
-                                    ?>
+                                    <?php if ($_SESSION['user_level'] != 'Petani') echo "<th>Petani</th>"; ?>
                                     <th>Kategori</th>
                                     <th>Harga</th>
                                     <th>Stok</th>
-                                    <th class="text-center">Status</th>
+                                    <th>Tgl Panen</th> <th class="text-center">Status</th>
                                     <th class="text-center">#</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php
                                 $nomor = 1;
-
-                                // 🔑 Kunci: Membangun query secara dinamis berdasarkan level user
-                                $query = "SELECT
-                                    produk.*,
-                                    petani.nama_petani,
-                                    kategori_produk.nama_kategori
-                                    FROM produk
-                                    JOIN petani ON produk.id_petani = petani.id_petani
-                                    JOIN kategori_produk ON produk.id_kategori = kategori_produk.id_kategori";
+                                $query = "SELECT p.*, pt.nama_petani, kp.nama_kategori FROM produk p
+                                          JOIN petani pt ON p.id_petani = pt.id_petani
+                                          JOIN kategori_produk kp ON p.id_kategori = kp.id_kategori";
                                 
-                                // 👨‍🌾 Jika yang login adalah Petani, filter berdasarkan ID-nya
                                 if ($_SESSION['user_level'] == 'Petani') {
                                     $id_petani_login = $_SESSION['user_id'];
-                                    $query .= " WHERE produk.id_petani = '$id_petani_login'";
+                                    $query .= " WHERE p.id_petani = '$id_petani_login'";
                                 }
-                                
-                                $query .= " ORDER BY produk.id_produk DESC";
+                                $query .= " ORDER BY p.id_produk DESC";
 
                                 $ambil = $con->query($query);
                                 while ($row = $ambil->fetch_assoc()) {
@@ -59,21 +46,26 @@
                                             <img src="images/produk/<?= $row['foto_produk']; ?>" width="50" class="me-2">
                                             <?= $row['nama_produk']; ?>
                                         </td>
-                                        <?php
-                                        // 🔑 Kunci: Hanya tampilkan data 'Petani' jika yang login bukan Petani
-                                        if ($_SESSION['user_level'] != 'Petani') {
-                                            echo "<td>" . $row['nama_petani'] . "</td>";
-                                        }
-                                        ?>
+                                        <?php if ($_SESSION['user_level'] != 'Petani') echo "<td>" . $row['nama_petani'] . "</td>"; ?>
                                         <td><?= $row['nama_kategori']; ?></td>
                                         <td>Rp <?= number_format($row['harga']); ?></td>
                                         <td><?= $row['stok']; ?> <?= $row['satuan']; ?></td>
+                                        
+                                        <td>
+                                            <?php
+                                            if (!empty($row['tanggal_panen'])) {
+                                                echo date('d M Y', strtotime($row['tanggal_panen']));
+                                            } else {
+                                                echo "-";
+                                            }
+                                            ?>
+                                        </td>
+                                        
                                         <td class="text-center"><?= $row['status_produk']; ?></td>
                                         <td class="text-center">
                                             <div class="dropdown">
                                                 <button class="btn btn-warning dropdown-toggle btn-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                    <i class="fa-regular fa-cogs"></i>
-                                                </button>
+                                                    <i class="fa fa-cogs"></i> </button>
                                                 <ul class="dropdown-menu">
                                                     <li><a class="dropdown-item" href="?page=produk&aksi=ubah&id_produk=<?= $row['id_produk'] ?>">Ubah</a></li>
                                                     <li><a class="dropdown-item" href="javascript:void(0)" onclick="confirmDelete(<?= $row['id_produk']; ?>)">Hapus</a></li>
@@ -95,11 +87,11 @@
 function confirmDelete(id_produk) {
     Swal.fire({
         title: 'Apakah Anda yakin?',
-        text: "Menghapus produk juga akan menghapus riwayat harga terkait!",
+        text: "Data produk yang dihapus tidak dapat dikembalikan!",
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
         confirmButtonText: 'Ya, hapus!',
         cancelButtonText: 'Batal'
     }).then((result) => {
