@@ -41,7 +41,7 @@ if (isset($_POST['upload'])) {
             $error_upload = "Ukuran file terlalu besar. Maksimal 2MB.";
         } else {
             $nama_baru = 'bukti_sampai_' . $id_pesanan . '_' . time() . '.' . $ekstensi;
-            $folder = '../../images/bukti_sampai/';
+            $folder = 'images/bukti_sampai/';
             if (!file_exists($folder)) {
                 mkdir($folder, 0777, true);
             }

@@ -157,7 +157,7 @@ if (!$has_access) {
                         <div class="card-header">Bukti Pembayaran</div>
                         <div class="card-body text-center">
                             <a href="images/bukti_bayar/<?= $pesanan['bukti_bayar']; ?>" target="_blank">
-                                <img src="../../images/bukti_bayar/<?= htmlspecialchars($pesanan['bukti_bayar']); ?>">
+                                <img src="images/bukti_bayar/<?= htmlspecialchars($pesanan['bukti_bayar']); ?>">
                             </a>
                         </div>
                     </div>
@@ -165,7 +165,7 @@ if (!$has_access) {
                 <?php if (!empty($pesanan['bukti_sampai'])): ?>
                     <div class=" card mb-3">
                         <label><strong>Bukti Sampai:</strong></label><br>
-                        <img src="../../images/bukti_sampai/<?= htmlspecialchars($pesanan['bukti_sampai']); ?>" alt="Bukti Sampai" class="img-fluid img-thumbnail" style="max-width: 300px;">
+                        <img src="images/bukti_sampai/<?= htmlspecialchars($pesanan['bukti_sampai']); ?>" alt="Bukti Sampai" class="img-fluid img-thumbnail" style="max-width: 300px;">
                     </div>
                 <?php else: ?>
                     <div class="mt-3 text-muted">

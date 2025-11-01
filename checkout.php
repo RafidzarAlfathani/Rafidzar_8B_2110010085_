@@ -27,6 +27,9 @@ if (isset($_POST['buat_pesanan'])) {
     // Ambil data dari form
     $alamat_pengiriman = mysqli_real_escape_string($con, $_POST['alamat_pengiriman']);
     $id_metode_pengiriman = (int)$_POST['id_metode_pengiriman']; // Ambil ID metode yang dipilih
+    // Tambahkan metode pembayaran default (karena saat ini hanya Transfer Bank)
+    $metode_pembayaran = "Transfer Bank";
+
 
     // BARU: Validasi dan ambil biaya pengiriman langsung dari DB, bukan dari form (lebih aman)
     $stmt = $con->prepare("SELECT biaya FROM metode_pengiriman WHERE id_metode = ? AND status = 'Aktif'");
@@ -57,12 +60,13 @@ if (isset($_POST['buat_pesanan'])) {
     $kode_invoice = "INV-" . date("Ymd-His") . "-" . $id_pembeli;
     $status_pesanan = "Menunggu Pembayaran";
 
-    // Mulai Transaksi Database
+    // Mulai Fsaksi Database
     $con->begin_transaction();
     try {
         // 1. Simpan data ke tabel 'pesanan' (dengan id_metode_pengiriman)
-        $query_pesanan = "INSERT INTO pesanan (kode_invoice, id_pembeli, alamat_pengiriman, total_bayar, ongkir, biaya_admin, status_pesanan, id_metode_pengiriman)
-                          VALUES ('$kode_invoice', '$id_pembeli', '$alamat_pengiriman', '$total_bayar', '$ongkir', '$biaya_admin', '$status_pesanan', '$id_metode_pengiriman')";
+        $query_pesanan = "INSERT INTO pesanan (kode_invoice, id_pembeli, alamat_pengiriman, total_bayar, ongkir, biaya_admin, status_pesanan, id_metode_pengiriman, metode_pembayaran) 
+    VALUES ('$kode_invoice', '$id_pembeli', '$alamat_pengiriman', '$total_bayar', '$ongkir', '$biaya_admin', '$status_pesanan', '$id_metode_pengiriman', '$metode_pembayaran')";
+
         $con->query($query_pesanan);
         $id_pesanan_baru = $con->insert_id;
 
@@ -80,7 +84,7 @@ if (isset($_POST['buat_pesanan'])) {
 
         // Notifikasi WhatsApp (jika ada, tidak perlu diubah)
         // ... (kode notifikasi WA Anda) ...
-                // -----------------------------------------------------
+        // -----------------------------------------------------
         // BAGIAN NOTIFIKASI WHATSAPP SETELAH TRANSAKSI SUKSES
         // -----------------------------------------------------
         $token = "7HY2322NXBXt4LKDVpkU"; // GANTI DENGAN TOKEN FONNTE ANDA
@@ -126,7 +130,19 @@ if (isset($_POST['buat_pesanan'])) {
 ?>
 
 <div class="breadcrumbs_area">
-    <div class="container"><div class="row"><div class="col-12"><div class="breadcrumb_content"><h3>Checkout</h3><ul><li><a href="index.php">Home</a></li><li>Checkout</li></ul></div></div></div></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="breadcrumb_content">
+                    <h3>Checkout</h3>
+                    <ul>
+                        <li><a href="index.php">Home</a></li>
+                        <li>Checkout</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div class="checkout_page_bg">
@@ -147,7 +163,10 @@ if (isset($_POST['buat_pesanan'])) {
                         <div class="order_table table-responsive">
                             <table>
                                 <thead>
-                                    <tr><th>Produk</th><th>Total</th></tr>
+                                    <tr>
+                                        <th>Produk</th>
+                                        <th>Total</th>
+                                    </tr>
                                 </thead>
                                 <tbody>
                                     <?php
@@ -161,14 +180,30 @@ if (isset($_POST['buat_pesanan'])) {
                                             $item_total = $item_checkout['harga'] * $jumlah_checkout;
                                             $subtotal_checkout += $item_total;
                                     ?>
-                                            <tr><td> <?= $item_checkout['nama_produk'] ?> <strong> × <?= $jumlah_checkout ?></strong></td><td> Rp <?= number_format($item_checkout['harga']) ?></td></tr>
-                                    <?php } } ?>
+                                            <tr>
+                                                <td> <?= $item_checkout['nama_produk'] ?> <strong> × <?= $jumlah_checkout ?></strong></td>
+                                                <td> Rp <?= number_format($item_checkout['harga']) ?></td>
+                                            </tr>
+                                    <?php }
+                                    } ?>
                                 </tbody>
                                 <tfoot>
-                                    <tr><th>Subtotal</th><td>Rp <?= number_format($subtotal_checkout) ?></td></tr>
-                                    <tr><th>Pengiriman</th><td id="ongkir-display">Pilih metode pengiriman</td></tr>
-                                    <tr><th>Biaya Admin</th><td>Rp <?= number_format($biaya_admin) ?></td></tr>
-                                    <tr class="order_total"><th>Total Pesanan</th><td><strong id="total-display">Rp <?= number_format($subtotal_checkout + $biaya_admin) ?></strong></td></tr>
+                                    <tr>
+                                        <th>Subtotal</th>
+                                        <td>Rp <?= number_format($subtotal_checkout) ?></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Pengiriman</th>
+                                        <td id="ongkir-display">Pilih metode pengiriman</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Biaya Admin</th>
+                                        <td>Rp <?= number_format($biaya_admin) ?></td>
+                                    </tr>
+                                    <tr class="order_total">
+                                        <th>Total Pesanan</th>
+                                        <td><strong id="total-display">Rp <?= number_format($subtotal_checkout + $biaya_admin) ?></strong></td>
+                                    </tr>
                                 </tfoot>
                             </table>
                         </div>
@@ -176,13 +211,13 @@ if (isset($_POST['buat_pesanan'])) {
                             <div class="panel-default" style="margin-bottom: 20px;">
                                 <h4 style="font-size: 16px; font-weight: 600; border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 15px;">Pilih Metode Pengiriman</h4>
                                 <?php while ($metode = $query_metode->fetch_assoc()): ?>
-                                <div style="margin-bottom: 15px;">
-                                    <input id="shipping_<?= $metode['id_metode']; ?>" name="id_metode_pengiriman" type="radio" value="<?= $metode['id_metode']; ?>" data-biaya="<?= $metode['biaya']; ?>" required>
-                                    <label for="shipping_<?= $metode['id_metode']; ?>" style="display: inline; margin-left: 5px;">
-                                        <strong><?= $metode['nama_metode']; ?> - Rp <?= number_format($metode['biaya']); ?></strong>
-                                    </label>
-                                    <p style="font-size: 13px; color: #666; margin-left: 25px; margin-top: 5px;"><?= $metode['deskripsi']; ?></p>
-                                </div>
+                                    <div style="margin-bottom: 15px;">
+                                        <input id="shipping_<?= $metode['id_metode']; ?>" name="id_metode_pengiriman" type="radio" value="<?= $metode['id_metode']; ?>" data-biaya="<?= $metode['biaya']; ?>" required>
+                                        <label for="shipping_<?= $metode['id_metode']; ?>" style="display: inline; margin-left: 5px;">
+                                            <strong><?= $metode['nama_metode']; ?> - Rp <?= number_format($metode['biaya']); ?></strong>
+                                        </label>
+                                        <p style="font-size: 13px; color: #666; margin-left: 25px; margin-top: 5px;"><?= $metode['deskripsi']; ?></p>
+                                    </div>
                                 <?php endwhile; ?>
                             </div>
                             <div class="order_button">
@@ -197,42 +232,42 @@ if (isset($_POST['buat_pesanan'])) {
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const shippingOptions = document.querySelectorAll('input[name="id_metode_pengiriman"]');
-    const ongkirDisplay = document.getElementById('ongkir-display');
-    const totalDisplay = document.getElementById('total-display');
+    document.addEventListener('DOMContentLoaded', function() {
+        const shippingOptions = document.querySelectorAll('input[name="id_metode_pengiriman"]');
+        const ongkirDisplay = document.getElementById('ongkir-display');
+        const totalDisplay = document.getElementById('total-display');
 
-    const subtotal = <?= $subtotal_checkout; ?>;
-    const biayaAdmin = <?= $biaya_admin; ?>;
+        const subtotal = <?= $subtotal_checkout; ?>;
+        const biayaAdmin = <?= $biaya_admin; ?>;
 
-    // Fungsi untuk memformat angka menjadi format Rupiah
-    function formatRupiah(angka) {
-        return new Intl.NumberFormat('id-ID', {
-            style: 'currency',
-            currency: 'IDR',
-            minimumFractionDigits: 0
-        }).format(angka).replace('Rp', 'Rp ');
-    }
+        // Fungsi untuk memformat angka menjadi format Rupiah
+        function formatRupiah(angka) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0
+            }).format(angka).replace('Rp', 'Rp ');
+        }
 
-    shippingOptions.forEach(function(radio) {
-        radio.addEventListener('change', function() {
-            if (this.checked) {
-                const biayaOngkir = parseFloat(this.getAttribute('data-biaya'));
-                const totalBayar = subtotal + biayaOngkir + biayaAdmin;
+        shippingOptions.forEach(function(radio) {
+            radio.addEventListener('change', function() {
+                if (this.checked) {
+                    const biayaOngkir = parseFloat(this.getAttribute('data-biaya'));
+                    const totalBayar = subtotal + biayaOngkir + biayaAdmin;
 
-                ongkirDisplay.textContent = formatRupiah(biayaOngkir);
-                totalDisplay.innerHTML = '<strong>' + formatRupiah(totalBayar) + '</strong>';
-            }
+                    ongkirDisplay.textContent = formatRupiah(biayaOngkir);
+                    totalDisplay.innerHTML = '<strong>' + formatRupiah(totalBayar) + '</strong>';
+                }
+            });
         });
-    });
 
-    // Jika hanya ada satu opsi pengiriman, otomatis pilih
-    if (shippingOptions.length === 1) {
-        shippingOptions[0].checked = true;
-        // Memicu event 'change' secara manual
-        shippingOptions[0].dispatchEvent(new Event('change'));
-    }
-});
+        // Jika hanya ada satu opsi pengiriman, otomatis pilih
+        if (shippingOptions.length === 1) {
+            shippingOptions[0].checked = true;
+            // Memicu event 'change' secara manual
+            shippingOptions[0].dispatchEvent(new Event('change'));
+        }
+    });
 </script>
 
 

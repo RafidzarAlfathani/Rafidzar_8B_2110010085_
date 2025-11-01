@@ -141,7 +141,7 @@ $id_pesanan = $pesanan['id_pesanan'];
                         <div class="card-header">
                             <label><strong>Bukti Sampai:</strong></label><br>
                         </div>
-                        <img src="../../images/bukti_sampai/<?= htmlspecialchars($pesanan['bukti_sampai']); ?>" alt="Bukti Sampai" class="img-fluid img-thumbnail" style="max-width: 300px;">
+                        <img src="admin/images/bukti_sampai/<?= htmlspecialchars($pesanan['bukti_sampai']); ?>" alt="Bukti Sampai" class="img-fluid img-thumbnail" style="max-width: 300px;">
                     </div>
                 <?php else: ?>
                     <div class="mt-3 text-muted">
