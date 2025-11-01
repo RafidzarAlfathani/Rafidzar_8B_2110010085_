@@ -152,13 +152,12 @@ if (!$has_access) {
                         </ul>
                     </div>
                 </div>
-
                 <?php if (($user_level == 'Admin' || $user_level == 'Pimpinan') && $pesanan['metode_pembayaran'] == 'Transfer Bank' && !empty($pesanan['bukti_bayar'])) : ?>
                     <div class="card mb-3">
                         <div class="card-header">Bukti Pembayaran</div>
                         <div class="card-body text-center">
                             <a href="images/bukti_bayar/<?= $pesanan['bukti_bayar']; ?>" target="_blank">
-                                <img src="images/bukti_bayar/<?= $pesanan['bukti_bayar']; ?>" class="img-fluid" style="max-height: 300px;">
+                                <img src="../../images/bukti_bayar/<?= htmlspecialchars($pesanan['bukti_bayar']); ?>">
                             </a>
                         </div>
                     </div>
